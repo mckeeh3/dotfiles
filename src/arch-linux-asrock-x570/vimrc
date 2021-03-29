@@ -1,0 +1,90 @@
+let g:powerline_pycmd = 'py3'
+
+syntax on
+set number relativenumber
+set hlsearch
+set incsearch
+
+set smartindent
+set tabstop=2
+set shiftwidth=2
+set expandtab
+
+" Persistent undo - :h undo-persistence
+set undodir=~/.vim/undodir
+set undofile
+
+set termguicolors
+
+" 
+set clipboard+=unnamed
+
+inoremap {<cr> {<cr>}<c-o><s-o>
+inoremap [<cr> [<cr>]<c-o><s-o>
+inoremap (<cr> (<cr>)<c-o><s-o>
+
+" vim-plug
+" A minimalist Vim plugin manager.
+" https://github.com/junegunn/vim-plug
+
+" Install
+" curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+" PlugInstall [name ...] [#threads]	Install plugins
+" PlugUpdate [name ...] [#threads]	Install or update plugins
+" PlugClean[!]	Remove unlisted plugins (bang version will clean without prompt)
+" PlugUpgrade	Upgrade vim-plug itself
+" PlugStatus	Check the status of plugins
+" PlugDiff	Examine changes from the previous update and the pending changes
+" PlugSnapshot[!] [output path]	Generate script for restoring the current snapshot of the plugins
+
+" https://vimawesome.com/
+
+call plug#begin('~/.vim/plugged')
+
+Plug 'bling/vim-airline'
+Plug 'airblade/vim-gitgutter'
+Plug 'powerline/powerline'
+Plug 'scrooloose/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'preservim/nerdtree' " :NERDTree
+let NERDTreeShowHidden=1
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'mileszs/ack.vim'  " :Ack <search>, requires installation of ack, sudo pacman -S ack, brew install ack
+Plug 'gabesoft/vim-ags' " :Ags <search>, requires installation of the silver searcher, sudo pacman -S the_silver_searcher, brew install the_silver_searcher
+Plug 'junegunn/fzf', { 'do': './install --bin' }
+Plug 'junegunn/fzf.vim' " :FZF, :Files - see other commands https://vimawesome.com/plugin/fzf-vim
+Plug 'airblade/vim-gitgutter'
+
+call plug#end()
+
+" open a NERDTree automatically when vim starts up and no files were specified
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+
+" open NERDTree automatically when vim starts up on opening a directory
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
+
+" https://alex.dzyoba.com/blog/vim-revamp/
+" cscope
+function! Cscope(option, query)
+  let color = '{ x = $1; $1 = ""; z = $3; $3 = ""; printf "\033[34m%s\033[0m:\033[31m%s\033[0m\011\033[37m%s\033[0m\n", x,z,$0; }'
+  let opts = {
+  \ 'source':  "cscope -dL" . a:option . " " . a:query . " | awk '" . color . "'",
+  \ 'options': ['--ansi', '--prompt', '> ',
+  \             '--multi', '--bind', 'alt-a:select-all,alt-d:deselect-all',
+  \             '--color', 'fg:188,fg+:222,bg+:#3a3a3a,hl+:104'],
+  \ 'down': '40%'
+  \ }
+  function! opts.sink(lines)
+    let data = split(a:lines)
+    let file = split(data[0], ":")
+    execute 'e ' . '+' . file[1] . ' ' . file[0]
+  endfunction
+  call fzf#run(opts)
+endfunction
+
+" Invoke command. 'g' is for call graph, kinda.
+nnoremap <silent> <Leader>g :call Cscope('3', expand('<cword>'))<CR>
+
