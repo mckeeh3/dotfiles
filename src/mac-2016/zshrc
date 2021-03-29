@@ -181,6 +181,7 @@ POWERLEVEL9K_VCS_COMMIT_ICON="\uf417"
 #
 # $ prompt_powerlevel9k_setup
 
+neofetch
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/Users/hxmc/.sdkman"
