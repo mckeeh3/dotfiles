@@ -1,3 +1,13 @@
+# =====
+# sudo pacman -S powerline
+# sudo pacman -S syntax-highlighting
+# sudo pacman -S zsh-syntax-highlighting
+# sudo pacman -S source-highlight
+#
+# Pacman color, uncomment the "Color" line in /etc/pacman.conf
+#
+# =====
+#
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -124,10 +134,11 @@ alias vi=vim
 alias less='less -X'
 alias psgrep='ps -ef | grep -v grep | grep'
 
-export JAVA_HOME=/opt/java
-export MAVEN_HOME=/opt/apache-maven
-export PATH=$JAVA_HOME/bin:$PATH
-export PATH=$MAVEN_HOME/bin:$PATH
+#export JAVA_HOME=/usr/lib/jvm/java-11-adoptopenjdk
+#export JAVA_HOME=/opt/java
+#export MAVEN_HOME=/opt/apache-maven
+#export PATH=$JAVA_HOME/bin:$PATH
+#export PATH=$MAVEN_HOME/bin:$PATH
 export MANPAGER='less -X'
 
 export GOOGLE_CLOUD_HOME=~/Lightbend/google-cloud-sdk
@@ -188,11 +199,11 @@ neofetch
 # For Kubernetes and Yugabyte
 export PATH=~/Lightbend/yugabyte/bin:$PATH
 alias kc=kubectl
+source <(kubectl completion zsh)
 
 alias mk=minikube
 source <(minikube completion zsh)
 
-source <(kubectl completion zsh)
 # Below required for mvn build error with woe-sim project
 # See - https://github.com/fabric8io/docker-maven-plugin/issues/1342
 export MAVEN_OPTS="-Djdk.tls.client.protocols=TLSv1.2"

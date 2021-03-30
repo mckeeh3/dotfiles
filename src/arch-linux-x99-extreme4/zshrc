@@ -134,10 +134,10 @@ alias vi=vim
 alias less='less -X'
 alias psgrep='ps -ef | grep -v grep | grep'
 
-export JAVA_HOME=/usr/lib/jvm/java-11-adoptopenjdk
+#export JAVA_HOME=/usr/lib/jvm/java-11-adoptopenjdk
 #export JAVA_HOME=/opt/java
 #export MAVEN_HOME=/opt/apache-maven
-export PATH=$JAVA_HOME/bin:$PATH
+#export PATH=$JAVA_HOME/bin:$PATH
 #export PATH=$MAVEN_HOME/bin:$PATH
 export MANPAGER='less -X'
 
