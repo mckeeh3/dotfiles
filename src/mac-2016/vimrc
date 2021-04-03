@@ -16,7 +16,7 @@ set undofile
 
 set termguicolors
 
-" 
+"
 set clipboard+=unnamed
 
 inoremap {<cr> {<cr>}<c-o><s-o>
@@ -27,6 +27,12 @@ inoremap (<cr> (<cr>)<c-o><s-o>
 let &t_SI = "\<Esc>]50;CursorShape=1\x7"
 let &t_SR = "\<Esc>]50;CursorShape=2\x7"
 let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+
+set cursorline
+hi cursorline cterm=none term=none
+autocmd WinEnter * setlocal cursorline
+autocmd WinLeave * setlocal nocursorline
+highlight CursorLine guibg=#303000 ctermbg=234
 
 " vim-plug
 " A minimalist Vim plugin manager.
@@ -56,11 +62,13 @@ Plug 'preservim/nerdtree' " :NERDTree
 let NERDTreeShowHidden=1
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'mileszs/ack.vim'  " :Ack <search>, requires installation of ack, pacman -S ack, brew install ack
-Plug 'gabesoft/vim-ags' " :Ags <search>, requires installation of the silver searcher, pacvam -S the_silver_searcher, brew install the_silver_searcher
+Plug 'gabesoft/vim-ags' " :Ags <search>, requires installation of the silver searcher, pacman -S the_silver_searcher, brew install the_silver_searcher
 Plug 'junegunn/fzf', { 'do': './install --bin' }
 Plug 'junegunn/fzf.vim' " :FZF, :Files - see other commands https://vimawesome.com/plugin/fzf-vim
 Plug 'airblade/vim-gitgutter'
 Plug 'sheerun/vim-polyglot'
+Plug 'frazrepo/vim-rainbow'
+let g:rainbow_active = 1
 
 call plug#end()
 
@@ -93,4 +101,3 @@ endfunction
 
 " Invoke command. 'g' is for call graph, kinda.
 nnoremap <silent> <Leader>g :call Cscope('3', expand('<cword>'))<CR>
-

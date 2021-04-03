@@ -16,12 +16,17 @@ set undofile
 
 set termguicolors
 
-" 
+"
 set clipboard+=unnamed
 
 inoremap {<cr> {<cr>}<c-o><s-o>
 inoremap [<cr> [<cr>]<c-o><s-o>
 inoremap (<cr> (<cr>)<c-o><s-o>
+
+" Change cursor shape in different modes - For iTerm2 on OSX
+let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+let &t_SR = "\<Esc>]50;CursorShape=2\x7"
+let &t_EI = "\<Esc>]50;CursorShape=0\x7"
 
 set cursorline
 hi cursorline cterm=none term=none
@@ -61,6 +66,7 @@ Plug 'gabesoft/vim-ags' " :Ags <search>, requires installation of the silver sea
 Plug 'junegunn/fzf', { 'do': './install --bin' }
 Plug 'junegunn/fzf.vim' " :FZF, :Files - see other commands https://vimawesome.com/plugin/fzf-vim
 Plug 'airblade/vim-gitgutter'
+Plug 'sheerun/vim-polyglot'
 Plug 'frazrepo/vim-rainbow'
 let g:rainbow_active = 1
 
@@ -95,4 +101,3 @@ endfunction
 
 " Invoke command. 'g' is for call graph, kinda.
 nnoremap <silent> <Leader>g :call Cscope('3', expand('<cword>'))<CR>
-
