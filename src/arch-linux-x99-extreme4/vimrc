@@ -6,8 +6,8 @@ set hlsearch
 set incsearch
 
 set smartindent
-set tabstop=4
-set shiftwidth=4
+set tabstop=2
+set shiftwidth=2
 set expandtab
 
 " Persistent undo - :h undo-persistence
@@ -16,7 +16,7 @@ set undofile
 
 set termguicolors
 
-" 
+"
 set clipboard+=unnamed
 
 inoremap {<cr> {<cr>}<c-o><s-o>
@@ -56,12 +56,11 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'preservim/nerdtree' " :NERDTree
 let NERDTreeShowHidden=1
 Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'mileszs/ack.vim'  " :Ack <search>, requires installation of ack, pacman -S ack, brew install ack
-Plug 'gabesoft/vim-ags' " :Ags <search>, requires installation of the silver searcher, pacman -S the_silver_searcher, brew install the_silver_searcher
+Plug 'mileszs/ack.vim'  " :Ack <search>, requires installation of ack, sudo pacman -S ack, brew install ack
+Plug 'gabesoft/vim-ags' " :Ags <search>, requires installation of the silver searcher, sudo pacman -S the_silver_searcher, brew install the_silver_searcher
 Plug 'junegunn/fzf', { 'do': './install --bin' }
 Plug 'junegunn/fzf.vim' " :FZF, :Files - see other commands https://vimawesome.com/plugin/fzf-vim
 Plug 'airblade/vim-gitgutter'
-" Plug 'miyakogi/conoline.vim'
 
 call plug#end()
 
@@ -94,4 +93,3 @@ endfunction
 
 " Invoke command. 'g' is for call graph, kinda.
 nnoremap <silent> <Leader>g :call Cscope('3', expand('<cword>'))<CR>
-
