@@ -124,9 +124,6 @@ alias less='less -X'
 alias psgrep='ps -ef | grep -v grep | grep'
 alias vi=vim
 
-export GOOGLE_CLOUD_HOME=~/Lightbend/google-cloud-sdk
-export PATH=$GOOGLE_CLOUD_HOME/bin:$PATH
-
 export MANPAGER='less -X'
 
 export LESSOPEN="| $(which src-hilite-lesspipe.sh) %s"

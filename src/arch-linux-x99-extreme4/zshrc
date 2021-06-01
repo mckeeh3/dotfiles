@@ -141,9 +141,6 @@ alias psgrep='ps -ef | grep -v grep | grep'
 #export PATH=$MAVEN_HOME/bin:$PATH
 export MANPAGER='less -X'
 
-export GOOGLE_CLOUD_HOME=~/Lightbend/google-cloud-sdk
-export PATH=$GOOGLE_CLOUD_HOME/bin:$PATH
-
 export LESSOPEN="| $(which src-hilite-lesspipe.sh) %s"
 export LESS=' -R '
 
