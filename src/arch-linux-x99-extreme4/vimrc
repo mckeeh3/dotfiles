@@ -23,6 +23,10 @@ inoremap {<cr> {<cr>}<c-o><s-o>
 inoremap [<cr> [<cr>]<c-o><s-o>
 inoremap (<cr> (<cr>)<c-o><s-o>
 
+" Change cursor shape in different modes - For Terminator
+let &t_SI = "\e[6 q"
+let &t_EI = "\e[2 q"
+
 set cursorline
 hi cursorline cterm=none term=none
 autocmd WinEnter * setlocal cursorline

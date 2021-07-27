@@ -178,6 +178,11 @@ POWERLEVEL9K_VCS_COMMIT_ICON="\uf417"
 
 neofetch
 
+# For Akka Serverless
+export PATH=~/.local/bin:$PATH
+akkasls completion --shell zsh > "${fpath[1]}/_akkasls"
+compinit
+
 # For Kubernetes and Yugabyte
 export PATH=~/Lightbend/yugabyte/bin:$PATH
 alias kc=kubectl
