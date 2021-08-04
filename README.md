@@ -26,3 +26,9 @@ TODO create set up scripts for Mac and Arch Linux
         ├── vimrc
         └── zshrc
 ~~~
+
+## tmux
+
+Use [Awesome Tmux](https://github.com/rothgar/awesome-tmux).
+
+Copy or link to `~/.tmux.conf.local` for custom config settings.
