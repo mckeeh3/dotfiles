@@ -123,6 +123,7 @@ source ~/z.sh # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/z
 alias less='less -X'
 alias psgrep='ps -ef | grep -v grep | grep'
 alias vi=vim
+alias got='got --no-pager'
 
 export MANPAGER='less -X'
 

@@ -133,6 +133,7 @@ alias ll='ls -l'
 alias vi=vim
 alias less='less -X'
 alias psgrep='ps -ef | grep -v grep | grep'
+alias git='git --no-pager'
 
 export EDITOR=$(which vim)
 export VISUAL=$EDITOR
