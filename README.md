@@ -32,3 +32,5 @@ TODO create set up scripts for Mac and Arch Linux
 Use [Awesome Tmux](https://github.com/rothgar/awesome-tmux).
 
 Copy or link to `~/.tmux.conf.local` for custom config settings.
+
+On Arch Linux, install `xclip`.
