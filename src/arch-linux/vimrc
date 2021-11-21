@@ -27,6 +27,9 @@ inoremap (<cr> (<cr>)<c-o><s-o>
 let &t_SI = "\e[6 q"
 let &t_EI = "\e[2 q"
 
+" List available colors - ll /usr/share/vim/vim*/colors/
+color industry
+
 set cursorline
 hi cursorline cterm=none term=none
 autocmd WinEnter * setlocal cursorline
