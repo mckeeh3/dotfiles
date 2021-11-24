@@ -337,6 +337,9 @@ set -g mouse on
 #set -g status-keys vi
 set -g mode-keys vi
 
+# This is needed for vim syntax highlighting
+set -g default-terminal "xterm"
+
 # replace C-b by C-a instead of using both prefixes
 # set -gu prefix2
 # unbind C-a
