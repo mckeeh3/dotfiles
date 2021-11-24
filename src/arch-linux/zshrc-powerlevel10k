@@ -1,3 +1,6 @@
+
+neofetch
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -148,8 +151,6 @@ export MANPAGER='less -X'
 export LESSOPEN="| $(which src-hilite-lesspipe.sh) %s"
 export LESS=' -R '
 
-neofetch
-
 # For Akka Serverless
 export PATH=~/.local/bin:$PATH
 akkasls completion --shell zsh > "${fpath[1]}/_akkasls"
@@ -168,9 +169,9 @@ source <(minikube completion zsh)
 # See - https://github.com/fabric8io/docker-maven-plugin/issues/1342
 export MAVEN_OPTS="-Djdk.tls.client.protocols=TLSv1.2"
 
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/home/hxmc/.sdkman"
 [[ -s "/home/hxmc/.sdkman/bin/sdkman-init.sh" ]] && source "/home/hxmc/.sdkman/bin/sdkman-init.sh"
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
