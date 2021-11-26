@@ -143,7 +143,9 @@ alias vi=vim
 alias less='less -X'
 alias psgrep='ps -ef | grep -v grep | grep'
 alias git='git --no-pager'
+alias ip='ip --color=auto'
 
+export TERM=xterm-256color
 export EDITOR=$(which vim)
 export VISUAL=$EDITOR
 export MANPAGER='less -X'
