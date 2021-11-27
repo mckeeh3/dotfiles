@@ -135,7 +135,11 @@ source $ZSH/oh-my-zsh.sh
 source ~/.oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
-alias less='less -X'
+if [[ -x $(which lsd) ]]; then
+  alias ls='lsd -l'
+else
+  alias ls='ls -l'
+fi
 alias psgrep='ps -ef | grep -v grep | grep'
 alias vi=vim
 alias git='git --no-pager'

@@ -138,6 +138,11 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 powerline-daemon -q
 source /usr/lib/python3.9/site-packages/powerline/bindings/zsh/powerline.zsh
 
+if [[ -x $(which lsd) ]]; then
+  alias ls='lsd -l'
+else
+  alias ls='ls -l'
+fi
 alias ll='ls -l'
 alias vi=vim
 alias less='less -X'
