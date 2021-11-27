@@ -167,7 +167,8 @@ colors:
   name: Atelierforest (dark)
   author: Chris Kempson
   primary:
-    background: "#1b1918"
+    #background: "#1b1918"
+    background: "#000000"
     foreground: "#a8a19f"
   cursor:
     text: "#1b1918"
