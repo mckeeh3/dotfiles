@@ -168,26 +168,26 @@ colors:
   name: iTerm2 default colors
   author: Hugh McKee
   primary:
-    background: "#000000"
-    foreground: "#a8a19f"
+    background: '#000000'
+    foreground: '#a8a19f'
   cursor:
-    text: "#1b1918"
-    cursor: "#f0f000"
+    text: '#1b1918'
+    cursor: '#f0f000'
   normal:
-    black: "#2e2e2e"
-    red: "#ff260d"
-    green: "#9ae204"
-    yellow: "#ffc400"
-    blue: "#00a1f9"
-    magenta: "#805bb5"
-    cyan: "#00ddef"
-    white: "#fffefe"
+    black: '#2e2e2e'
+    red: '#ff260d'
+    green: '#9ae204'
+    yellow: '#ffc400'
+    blue: '#3a6baf'
+    magenta: '#805bb5'
+    cyan: '#00ddef'
+    white: '#fffefe'
   bright:
-    black: "#555555"
-    red: "#ff4250"
-    green: "#b8e36d"
-    yellow: "#ffd852"
-    blue: "#00a5ff"
-    magenta: "#ab7aef"
-    cyan: "#74fcf3"
-    white: "#fffefe"
+    black: '#555555'
+    red: '#ff4250'
+    green: '#b8e36d'
+    yellow: '#ffd852'
+    blue: '#00a5ff'
+    magenta: '#ab7aef'
+    cyan: '#74fcf3'
+    white: '#fffefe'
