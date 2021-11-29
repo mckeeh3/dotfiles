@@ -31,9 +31,9 @@ window:
   # fall back to the window manager's recommended size.
   dimensions:
     #  columns: 0
-    columns: 200
+    #columns: 200
     #  lines: 0
-    lines: 200
+    #lines: 200
     # Window position (changes require restart)
     #
     # Specified in number of pixels.
@@ -70,6 +70,7 @@ window:
     # Values for `startup_mode` (macOS only):
     #   - SimpleFullscreen
     #startup_mode: Windowed
+    startup_mode: Maximized
     # Window title
     #title: Alacritty
     # Allow terminal applications to change Alacritty's window title.
@@ -162,34 +163,31 @@ font:
 
 # If `true`, bold text is drawn using the bright color variants.
 #draw_bold_text_with_bright_colors: false
-# Colors (Tomorrow Night)
+
 colors:
-  name: Atelierforest (dark)
-  author: Chris Kempson
+  name: iTerm2 default colors
+  author: Hugh McKee
   primary:
-    #background: "#1b1918"
     background: "#000000"
     foreground: "#a8a19f"
   cursor:
     text: "#1b1918"
-    cursor: "#a8a19f"
+    cursor: "#f0f000"
   normal:
-    black: "#1b1918"
-    red: "#f22c40"
-    green: "#5ab738"
-    yellow: "#d5911a"
-    blue: "#407ee7"
-    magenta: "#6666ea"
-    cyan: "#00ad9c"
-  # white: "#a8a19f"
-    white: "#f0f0f0"
+    black: "#2e2e2e"
+    red: "#ff260d"
+    green: "#9ae204"
+    yellow: "#ffc400"
+    blue: "#00a1f9"
+    magenta: "#805bb5"
+    cyan: "#00ddef"
+    white: "#fffefe"
   bright:
-    black: "#766e6b"
-    red: "#f22c40"
-    green: "#5ab738"
-    yellow: "#d5911a"
-    blue: "#407ee7"
-    magenta: "#6666ea"
-    cyan: "#00ad9c"
-  # white: "#f1efee"
-    white: "#f1efee"
+    black: "#555555"
+    red: "#ff4250"
+    green: "#b8e36d"
+    yellow: "#ffd852"
+    blue: "#00a5ff"
+    magenta: "#ab7aef"
+    cyan: "#74fcf3"
+    white: "#fffefe"
