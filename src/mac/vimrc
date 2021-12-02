@@ -105,3 +105,8 @@ endfunction
 
 " Invoke command. 'g' is for call graph, kinda.
 nnoremap <silent> <Leader>g :call Cscope('3', expand('<cword>'))<CR>
+
+" Enable mouse in tmux
+set ttymouse=xterm2
+set mouse=a
+
