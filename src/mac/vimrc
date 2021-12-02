@@ -70,6 +70,7 @@ Plug 'junegunn/fzf', { 'do': './install --bin' }
 Plug 'junegunn/fzf.vim' " :FZF, :Files - see other commands https://vimawesome.com/plugin/fzf-vim
 Plug 'airblade/vim-gitgutter'
 Plug 'sheerun/vim-polyglot'
+Plug 'gko/vim-coloresque'
 Plug 'frazrepo/vim-rainbow'
 let g:rainbow_active = 1
 

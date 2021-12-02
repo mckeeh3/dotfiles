@@ -68,6 +68,7 @@ Plug 'gabesoft/vim-ags' " :Ags <search>, requires installation of the silver sea
 Plug 'junegunn/fzf', { 'do': './install --bin' }
 Plug 'junegunn/fzf.vim' " :FZF, :Files - see other commands https://vimawesome.com/plugin/fzf-vim
 Plug 'airblade/vim-gitgutter'
+Plug 'gko/vim-coloresque'
 
 call plug#end()
 
