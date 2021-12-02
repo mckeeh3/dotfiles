@@ -166,7 +166,7 @@ colors:
   author: Hugh McKee
   primary:
     background: '#000000'
-    foreground: '#a8a19f'
+    foreground: '#ffffff'
   cursor:
     text: '#1b1918'
     cursor: '#f0a000'
