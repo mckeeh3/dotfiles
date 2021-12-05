@@ -30,7 +30,7 @@ window:
   # Number of lines/columns (not pixels) in the terminal. The number of columns
   # must be at least `2`, while using a value of `0` for columns and lines will
   # fall back to the window manager's recommended size.
-  dimensions:
+  #dimensions:
   #  columns: 0
   #  lines: 0
 
@@ -98,7 +98,7 @@ window:
 scrolling:
   # Maximum number of lines in the scrollback buffer.
   # Specifying '0' will disable scrolling.
-  #history: 10000
+  history: 10000
 
 # Scrolling distance multiplier.
 #multiplier: 3
