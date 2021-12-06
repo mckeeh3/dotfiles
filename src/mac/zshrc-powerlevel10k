@@ -93,7 +93,7 @@ plugins=(
   history
   history-substring-search # git clone https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-history-substring-search
   last-working-dir
-  osx
+  macos
   sudo
   vi-mode
   web-search
