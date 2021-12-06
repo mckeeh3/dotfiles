@@ -93,7 +93,7 @@ plugins=(
   extract
   git
   history
-  history-substring-search
+  history-substring-search # git clone https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-history-substring-search
   last-working-dir
   sudo
   vi-mode
@@ -105,9 +105,10 @@ plugins=(
 
 export TERM="xterm-256color"
 source $ZSH/oh-my-zsh.sh # sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-source ~/z.sh # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/z
 
 # User configuration
+
+source ~/z.sh # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/z
 
 # export MANPATH="/usr/local/man:$MANPATH"
 

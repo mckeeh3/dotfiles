@@ -84,13 +84,16 @@ ZSH_THEME="robbyrussell"
 plugins=(
   colored-man-pages
   colorize
+  copydir
+  copyfile
   docker
   docker-compose
   extract
   git
   history
-  history-substring-search
+  history-substring-search # git clone https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-history-substring-search
   last-working-dir
+  osx
   sudo
   vi-mode
   web-search
@@ -136,9 +139,10 @@ source ~/.oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
 if [[ -x $(which lsd) ]]; then
-  alias ls='lsd -l'
-else
-  alias ls='ls -l'
+  alias ls='lsd'
+fi
+if [[ -x $(which exa) ]]; then
+  alias ls='exa'
 fi
 alias psgrep='ps -ef | grep -v grep | grep'
 alias vi=vim
