@@ -135,7 +135,7 @@ source ~/z.sh # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/z
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 powerline-daemon -q
-source /usr/lib/python3.9/site-packages/powerline/bindings/zsh/powerline.zsh
+source /usr/share/powerline/bindings/zsh/powerline.zsh
 
 alias ll='ls -l'
 alias vi=vim
