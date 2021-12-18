@@ -138,7 +138,7 @@ source ~/.oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
 powerline-daemon -q
-source /usr/lib/python3.9/site-packages/powerline/bindings/zsh/powerline.zsh
+source /usr/share/powerline/bindings/zsh/powerline.zsh
 
 if [[ -x $(which lsd) ]]; then
   alias ls='lsd'
