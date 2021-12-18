@@ -177,6 +177,8 @@ source <(kubectl completion zsh)
 alias mk=minikube
 source <(minikube completion zsh)
 
+source /home/hxmc/.config/broot/launcher/bash/br
+
 # Below required for mvn build error with woe-sim project
 # See - https://github.com/fabric8io/docker-maven-plugin/issues/1342
 export MAVEN_OPTS="-Djdk.tls.client.protocols=TLSv1.2"
@@ -187,3 +189,4 @@ export MAVEN_OPTS="-Djdk.tls.client.protocols=TLSv1.2"
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/home/hxmc/.sdkman"
 [[ -s "/home/hxmc/.sdkman/bin/sdkman-init.sh" ]] && source "/home/hxmc/.sdkman/bin/sdkman-init.sh"
+
