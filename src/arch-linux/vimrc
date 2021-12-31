@@ -70,6 +70,7 @@ Plug 'junegunn/fzf.vim' " :FZF, :Files - see other commands https://vimawesome.c
 Plug 'airblade/vim-gitgutter'
 Plug 'gko/vim-coloresque'
 Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
+let g:Hexokinase_highlighters = ['backgroundfull']
 
 call plug#end()
 
