@@ -84,7 +84,7 @@ ZSH_THEME="robbyrussell"
 plugins=(
   colored-man-pages
   colorize
-  copydir
+  copypath
   copyfile
   docker
   docker-compose

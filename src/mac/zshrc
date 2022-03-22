@@ -73,7 +73,7 @@ ZSH_THEME="powerlevel9k/powerlevel9k"
 plugins=(
   colored-man-pages
   colorize
-  copydir
+  copypath
   copyfile
   docker
   docker-compose
