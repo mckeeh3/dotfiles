@@ -165,8 +165,10 @@ export LESS=' -R '
 # For Akka Serverless
 export PATH=~/.local/bin:$PATH
 akkasls completion --shell zsh > "${fpath[1]}/_akkasls"
+kalix completion --shell zsh > "${fpath[1]}/_kalix"
 autoload -U compinit; compinit
 alias as=akkasls
+alias kx=kalix
 
 # For Kubernetes and Yugabyte
 export PATH=~/Lightbend/yugabyte/bin:$PATH
