@@ -73,6 +73,8 @@ Plug 'sheerun/vim-polyglot'
 Plug 'gko/vim-coloresque'
 Plug 'frazrepo/vim-rainbow'
 let g:rainbow_active = 1
+Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
+let g:Hexokinase_highlighters = ['backgroundfull']
 
 call plug#end()
 
