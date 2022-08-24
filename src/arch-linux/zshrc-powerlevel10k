@@ -169,6 +169,7 @@ kalix completion --shell zsh > "${fpath[1]}/_kalix"
 autoload -U compinit; compinit
 alias as=akkasls
 alias kx=kalix
+alias fly=flyctl
 
 # For Kubernetes and Yugabyte
 export PATH=~/Lightbend/yugabyte/bin:$PATH
