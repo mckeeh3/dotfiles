@@ -108,3 +108,7 @@ nnoremap <silent> <Leader>g :call Cscope('3', expand('<cword>'))<CR>
 set ttymouse=xterm2
 set mouse=a
 
+" Copy/paste to system clipboard - copy: "+y, paste: "+p, requires installation of gvim
+vnoremap <C-c> "+y
+map <C-v> "+p
+

@@ -175,8 +175,8 @@ export PATH=~/Lightbend/yugabyte/bin:$PATH
 alias kc=kubectl
 source <(kubectl completion zsh)
 
-alias mk=minikube
-source <(minikube completion zsh)
+# alias mk=minikube
+# source <(minikube completion zsh)
 
 source /home/hxmc/.config/broot/launcher/bash/br
 
