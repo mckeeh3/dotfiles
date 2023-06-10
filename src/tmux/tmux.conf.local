@@ -339,8 +339,8 @@ set -g mode-keys vi
 
 # This is needed for vim syntax highlighting
 # set -g default-terminal "xterm"
-set -g default-terminal "xterm-256color"
-# set -g default-terminal "tmux-256color"
+# set -g default-terminal "xterm-256color"
+set -g default-terminal "tmux-256color"
 
 # replace C-b by C-a instead of using both prefixes
 # set -gu prefix2
