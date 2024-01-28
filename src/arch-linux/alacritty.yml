@@ -3,18 +3,18 @@ env:
 
 font:
   normal:
-    family: Azeret Mono
+    family: ProFont IIx Nerd Font
 
   bold:
-    family: Azeret Mono
+    family: ProFont IIx Nerd Font
 
   italic:
-    family: Azeret Mono
+    family: ProFont IIx Nerd Font
 
   bold_italic:
-    family: Azeret Mono
+    family: ProFont IIx Nerd Font
 
-  size: 9.0
+  size: 9.5
 
 colors:
   name: iTerm2 default colors
