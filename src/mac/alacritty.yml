@@ -3,18 +3,18 @@ env:
 
 font:
   normal:
-    family: MesloLGS NF
+    family: FiraCode Nerd Font Mono
 
   bold:
-    family: MesloLGS NF
+    family: FiraCode Nerd Font Mono
 
   italic:
-    family: MesloLGS NF
+    family: FiraCode Nerd Font Mono
 
   bold_italic:
-    family: MesloLGS NF
+    family: FiraCode Nerd Font Mono
 
-  size: 14.0
+  size: 15.0
 
 colors:
   name: iTerm2 default colors
