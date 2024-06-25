@@ -191,3 +191,5 @@ export MAVEN_OPTS="-Djdk.tls.client.protocols=TLSv1.2"
 export SDKMAN_DIR="/home/hxmc/.sdkman"
 [[ -s "/home/hxmc/.sdkman/bin/sdkman-init.sh" ]] && source "/home/hxmc/.sdkman/bin/sdkman-init.sh"
 
+
+PATH=~/.console-ninja/.bin:$PATH
