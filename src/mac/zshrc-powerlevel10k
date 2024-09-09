@@ -142,8 +142,8 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 if [[ -x $(which lsd) ]]; then
   alias ls='lsd'
 fi
-if [[ -x $(which exa) ]]; then
-  alias ls='exa'
+if [[ -x $(which eza) ]]; then
+  alias ls='eza'
 fi
 alias ll='ls -l'
 alias llt='ll --tree'

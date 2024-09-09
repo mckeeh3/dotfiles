@@ -6,6 +6,7 @@
 
 vim.opt.relativenumber = true
 vim.opt.guifont = "Azeret Mono"
+vim.opt.wrap = true
 
 -- lvim.colorscheme = "tokyonight-night"
 -- lvim.colorscheme = "material"
