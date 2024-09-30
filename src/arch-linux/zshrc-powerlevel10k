@@ -191,6 +191,13 @@ export MAVEN_OPTS="-Djdk.tls.client.protocols=TLSv1.2"
 source /etc/profile.d/conda.sh
 export CRYPTOGRAPHY_OPENSSL_NO_LEGACY=true
 
+# For Cursor IDE
+function cursor() {
+  /usr/bin/cursor "$@" </dev/null &>/dev/null &
+}
+
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/home/hxmc/.sdkman"
 [[ -s "/home/hxmc/.sdkman/bin/sdkman-init.sh" ]] && source "/home/hxmc/.sdkman/bin/sdkman-init.sh"
+
+
