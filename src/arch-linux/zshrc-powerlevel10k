@@ -164,11 +164,10 @@ export LESS=' -R '
 
 # For Akka Serverless
 export PATH=~/.local/bin:$PATH
+akka completion zsh > "${fpath[1]}/_akka"
 kalix completion zsh > "${fpath[1]}/_kalix"
 autoload -U compinit; compinit
-alias as=akkasls
 alias kx=kalix
-alias fly=flyctl
 
 # For Kubernetes and Yugabyte
 export PATH=~/Lightbend/yugabyte/bin:$PATH
@@ -199,5 +198,4 @@ function cursor() {
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/home/hxmc/.sdkman"
 [[ -s "/home/hxmc/.sdkman/bin/sdkman-init.sh" ]] && source "/home/hxmc/.sdkman/bin/sdkman-init.sh"
-
 
