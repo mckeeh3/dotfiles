@@ -165,7 +165,7 @@ source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.
 export PATH=~/.local/bin:$PATH
 kalix completion zsh > "${fpath[1]}/_kalix"
 autoload -U compinit; compinit
-alias as=akkasls
+alias as='akka --context stage --host api.kalix.st:443'
 alias kx=kalix
 
 # For Kubernetes and Yugabyte
