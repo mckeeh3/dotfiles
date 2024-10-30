@@ -167,7 +167,7 @@ export PATH=~/.local/bin:$PATH
 akka completion zsh > "${fpath[1]}/_akka"
 kalix completion zsh > "${fpath[1]}/_kalix"
 autoload -U compinit; compinit
-alias kx=kalix
+alias kx='akka --context stage --host api.kalix.st:443'
 
 # For Kubernetes and Yugabyte
 export PATH=~/Lightbend/yugabyte/bin:$PATH
