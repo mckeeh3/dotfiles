@@ -169,8 +169,7 @@ kalix completion zsh > "${fpath[1]}/_kalix"
 autoload -U compinit; compinit
 alias as='akka --context stage --host api.kalix.st:443'
 
-# For Kubernetes and Yugabyte
-export PATH=~/Lightbend/yugabyte/bin:$PATH
+# For Kubernetes
 alias kc=kubectl
 source <(kubectl completion zsh)
 
@@ -195,7 +194,11 @@ function cursor() {
   /usr/bin/cursor "$@" </dev/null &>/dev/null &
 }
 
+# For Windsurf IDE
+function windsurf() {
+  /usr/bin/windsurf "$@" </dev/null &>/dev/null &
+}
+
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/home/hxmc/.sdkman"
 [[ -s "/home/hxmc/.sdkman/bin/sdkman-init.sh" ]] && source "/home/hxmc/.sdkman/bin/sdkman-init.sh"
-
