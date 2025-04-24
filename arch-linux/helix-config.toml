@@ -8,3 +8,5 @@ line-number = "relative"
 [editor.soft-wrap]
 enable = true
 
+[keys.normal]
+"ret" = "move_visual_line_down"
