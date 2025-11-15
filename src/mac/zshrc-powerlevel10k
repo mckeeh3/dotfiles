@@ -163,10 +163,8 @@ source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.
 
 # For Akka Serverless
 export PATH=~/.local/bin:$PATH
-kalix completion zsh > "${fpath[1]}/_kalix"
+akka completion zsh > "${fpath[1]}/_akka"
 autoload -U compinit; compinit
-alias as='akka --context stage --host api.kalix.st:443'
-alias kx=kalix
 
 # For Kubernetes and Yugabyte
 export PATH=~/Lightbend/yugabyte/bin:$PATH
