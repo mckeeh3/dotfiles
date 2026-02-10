@@ -165,13 +165,13 @@ akka completion zsh > "${fpath[1]}/_akka"
 autoload -U compinit; compinit
 
 # For Kubernetes and Yugabyte
-export PATH=~/Lightbend/yugabyte/bin:$PATH
-alias kc=kubectl
-source <(kubectl completion zsh)
-alias mk=minikube
-source <(minikube completion zsh)
+# export PATH=~/Lightbend/yugabyte/bin:$PATH
+# alias kc=kubectl
+# source <(kubectl completion zsh)
+# alias mk=minikube
+# source <(minikube completion zsh)
 
-source /Users/hxmc/.config/broot/launcher/bash/br
+# source /Users/hxmc/.config/broot/launcher/bash/br
 
 # Below required for mvn build error with woe-sim project
 # See - https://github.com/fabric8io/docker-maven-plugin/issues/1342
