@@ -9,16 +9,19 @@ if [[ ! -d "${TARGET_DIR}" ]]; then
   exit 1
 fi
 
-mapfile -t scripts < <(find "${TARGET_DIR}" -maxdepth 1 -type f -name "*.sh" | sort)
+count=0
+found=0
 
-if [[ "${#scripts[@]}" -eq 0 ]]; then
+while IFS= read -r script; do
+  found=1
+  count=$((count + 1))
+  echo "Running ${script}"
+  bash "${script}"
+done < <(find "${TARGET_DIR}" -maxdepth 1 -type f -name "*.sh" | sort)
+
+if [[ "${found}" -eq 0 ]]; then
   echo "No scripts found in ${TARGET_DIR}"
   exit 0
 fi
 
-for script in "${scripts[@]}"; do
-  echo "Running ${script}"
-  bash "${script}"
-done
-
-echo "Completed ${#scripts[@]} scripts."
+echo "Completed ${count} scripts."
