@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# This script retrieves AI API keys from the GNOME Keyring (libsecret).
+# Usage: source arch-linux/set_ai_api_keys.sh
+#
+# To store your keys in the keyring initially, run these commands:
+# Tool prompts for Password, entry the API key.
+#
+# secret-tool store --label="OpenAI API Key" api_key openai
+# secret-tool store --label="Anthropic API Key" api_key anthropic
+# secret-tool store --label="Gemini API Key" api_key gemini
+
+# Guard to ensure the script is sourced
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    echo "Error: This script must be SOURCED, not executed."
+    echo "Usage: source $0"
+    exit 1
+fi
+
+# Function to retrieve a secret by its label
+get_secret() {
+    local label="$1"
+    secret-tool lookup "api_key" "$label"
+}
+
+# Export the keys to the current shell environment
+export OPENAI_API_KEY=$(get_secret "openai")
+export ANTHROPIC_API_KEY=$(get_secret "anthropic")
+export GEMINI_API_KEY=$(get_secret "gemini")
+
+# Optional: Inform the user if any keys are missing
+[ -z "$OPENAI_API_KEY" ] && echo "Warning: OPENAI_API_KEY is not set in keyring."
+[ -z "$ANTHROPIC_API_KEY" ] && echo "Warning: ANTHROPIC_API_KEY is not set in keyring."
+[ -z "$GEMINI_API_KEY" ] && echo "Warning: GEMINI_API_KEY is not set in keyring."

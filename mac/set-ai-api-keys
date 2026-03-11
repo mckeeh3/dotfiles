@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# This script retrieves AI API keys from the macOS Keychain.
+# Usage: source mac/set_ai_api_keys.sh
+#
+# Instructions to Store Keys on macOS:
+# Before running the script, you'll need to store your keys in the Keychain once:
+#
+# security add-generic-password -s "openai" -a "$USER" -w "YOUR_OPENAI_KEY"
+# security add-generic-password -s "anthropic" -a "$USER" -w "YOUR_ANTHROPIC_KEY"
+# security add-generic-password -s "gemini" -a "$USER" -w "YOUR_GEMINI_KEY"
+
+# Guard to ensure the script is sourced
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    echo "Error: This script must be SOURCED, not executed."
+    echo "Usage: source $0"
+    exit 1
+fi
+
+# Function to retrieve a secret from macOS Keychain
+get_secret() {
+    local service="$1"
+    # -s: service name, -w: display only the password (secret)
+    security find-generic-password -s "$service" -w 2>/dev/null
+}
+
+# Export the keys to the current shell environment
+export OPENAI_API_KEY=$(get_secret "openai")
+export ANTHROPIC_API_KEY=$(get_secret "anthropic")
+export GEMINI_API_KEY=$(get_secret "gemini")
+
+# Optional: Inform the user if any keys are missing
+[ -z "$OPENAI_API_KEY" ] && echo "Warning: OPENAI_API_KEY not found in macOS Keychain."
+[ -z "$ANTHROPIC_API_KEY" ] && echo "Warning: ANTHROPIC_API_KEY not found in macOS Keychain."
+[ -z "$GEMINI_API_KEY" ] && echo "Warning: GEMINI_API_KEY not found in macOS Keychain."

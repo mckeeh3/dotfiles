@@ -11,7 +11,7 @@ fi
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/Users/hxmc/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -171,7 +171,7 @@ autoload -U compinit; compinit
 # alias mk=minikube
 # source <(minikube completion zsh)
 
-# source /Users/hxmc/.config/broot/launcher/bash/br
+# source $HOME/.config/broot/launcher/bash/br
 
 # Below required for mvn build error with woe-sim project
 # See - https://github.com/fabric8io/docker-maven-plugin/issues/1342
@@ -181,5 +181,5 @@ export MAVEN_OPTS="-Djdk.tls.client.protocols=TLSv1.2"
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="/Users/hxmc/.sdkman"
-[[ -s "/Users/hxmc/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/hxmc/.sdkman/bin/sdkman-init.sh"
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"

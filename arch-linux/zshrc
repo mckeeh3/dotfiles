@@ -178,7 +178,7 @@ source <(kubectl completion zsh)
 # alias mk=minikube
 # source <(minikube completion zsh)
 
-source /home/hxmc/.config/broot/launcher/bash/br
+source $HOME/.config/broot/launcher/bash/br
 
 # Below required for mvn build error with woe-sim project
 # See - https://github.com/fabric8io/docker-maven-plugin/issues/1342
@@ -186,6 +186,9 @@ export MAVEN_OPTS="-Djdk.tls.client.protocols=TLSv1.2"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# For setting AI API keys
+source $HOME/dotfiles/arch-linux/set-ai-api-keys
 
 # For miniconda
 source /etc/profile.d/conda.sh
@@ -202,5 +205,5 @@ function windsurf() {
 }
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="/home/hxmc/.sdkman"
-[[ -s "/home/hxmc/.sdkman/bin/sdkman-init.sh" ]] && source "/home/hxmc/.sdkman/bin/sdkman-init.sh"
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
