@@ -1,0 +1,103 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+CONFIG_FILE="$SCRIPT_DIR/ssh2.config"
+
+if [[ ! -f "$CONFIG_FILE" ]]; then
+  echo "Missing config file: $CONFIG_FILE" >&2
+  exit 1
+fi
+
+labels=()
+ips=()
+
+while IFS= read -r raw_line || [[ -n "$raw_line" ]]; do
+  line=${raw_line#"${raw_line%%[![:space:]]*}"}
+  line=${line%"${line##*[![:space:]]}"}
+
+  [[ -z "$line" ]] && continue
+  [[ ${line:0:1} == "#" ]] && continue
+
+  read -r label ip extra <<< "$line"
+
+  if [[ -z "${label:-}" || -z "${ip:-}" || -n "${extra:-}" ]]; then
+    echo "Invalid config line: $raw_line" >&2
+    exit 1
+  fi
+
+  labels+=("$label")
+  ips+=("$ip")
+done < "$CONFIG_FILE"
+
+if [[ ${#ips[@]} -eq 0 ]]; then
+  echo "No SSH targets found in $CONFIG_FILE" >&2
+  exit 1
+fi
+
+cleanup() {
+  tput cnorm
+  stty "$original_stty"
+}
+
+draw_menu() {
+  local selected_index=$1
+
+  tput clear
+  printf 'Select an SSH target and press Enter:\n\n'
+
+  for i in "${!ips[@]}"; do
+    if [[ $i -eq $selected_index ]]; then
+      printf '> %s (%s)\n' "${labels[$i]}" "${ips[$i]}"
+    else
+      printf '  %s (%s)\n' "${labels[$i]}" "${ips[$i]}"
+    fi
+  done
+}
+
+trap cleanup EXIT INT TERM
+original_stty=$(stty -g)
+stty -echo -icanon time 0 min 1
+tput civis
+
+selected=0
+draw_menu "$selected"
+
+while true; do
+  IFS= read -rsn1 key
+
+  if [[ $key == "" || $key == $'\n' || $key == $'\r' ]]; then
+    break
+  fi
+
+  if [[ $key == $'\x1b' ]]; then
+    IFS= read -rsn2 rest || true
+    key+="$rest"
+  fi
+
+  case "$key" in
+    $'\x1b[A')
+      if (( selected > 0 )); then
+        selected=$((selected - 1))
+      else
+        selected=$((${#ips[@]} - 1))
+      fi
+      draw_menu "$selected"
+      ;;
+    $'\x1b[B')
+      if (( selected < ${#ips[@]} - 1 )); then
+        selected=$((selected + 1))
+      else
+        selected=0
+      fi
+      draw_menu "$selected"
+      ;;
+  esac
+done
+
+cleanup
+trap - EXIT INT TERM
+
+printf 'Connecting to %s (%s)\n' "${labels[$selected]}" "${ips[$selected]}"
+exec ssh "${ips[$selected]}"
