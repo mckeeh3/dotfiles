@@ -1,7 +1,21 @@
 
 # Dot files for Mac OSX and Arch Linux systems
 
-TODO create set up scripts for Mac and Arch Linux
+## Omarchy (Bash)
+
+Use the separate [Omarchy Bash profile](src/omarchy/README.md) to install the
+Zsh-like Bash customizations while retaining Omarchy's defaults:
+
+```bash
+bash omarchy-setup.sh
+# To back up and replace an existing .bashrc after reviewing it:
+bash omarchy-setup.sh --replace-bashrc
+```
+
+Do not use `arch-linux-setup.sh` for this profile; it installs the older Zsh and
+application configs. Local overrides and installer backups stay outside Git.
+
+## Legacy platform configs
 
 ~~~bash
 .

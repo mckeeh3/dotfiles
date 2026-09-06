@@ -1,2 +1,9 @@
 .metals
 .vscode
+
+# Local-only overrides and accidental backup files (never deployment inputs).
+*.local.sh
+*.bak
+*.bak.*
+*~
+.bashrc.dotfiles.*
