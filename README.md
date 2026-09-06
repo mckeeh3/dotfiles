@@ -41,6 +41,31 @@ application configs. Local overrides and installer backups stay outside Git.
         └── zshrc
 ~~~
 
+## SSH target picker
+
+`ssh2` opens an arrow-key menu of targets from `ssh2.config` (format: `label IP`).
+Press Enter to connect, or `q` to cancel.
+
+```bash
+ssh2                          # Configured targets; no scan
+ssh2 --scan                   # Discover targets on 192.168.7.0/24
+ssh2 --scan 192.168.8.0/24     # Discover targets on another IPv4 subnet
+```
+
+Scanning requires Nmap (`sudo pacman -S nmap` on Arch, `brew install nmap`
+on macOS), but does not require sudo. Only scan networks you own or have
+permission to scan. Hosts that ignore ping are included; large subnets or
+filtered ports can take a while.
+
+Results reuse configured labels, otherwise use reverse-DNS hostnames when
+available, falling back to IPs. Scan mode works without a config file and asks
+for an SSH username (Enter uses your local username). Discoveries are never
+written to the config. An open TCP port 22 does not guarantee an SSH service
+or valid login credentials; SSH on other ports is not discovered.
+
+Validation: `bash -n ssh2` and `python3 -m unittest discover -s tests -p 'test_ssh2.py'`
+(the tests mock Nmap and SSH; no network scan or login is performed).
+
 ## tmux
 
 Use [Awesome Tmux](https://github.com/rothgar/awesome-tmux).
