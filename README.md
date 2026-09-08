@@ -1,7 +1,20 @@
 
 # Dot files for Mac OSX and Arch Linux systems
 
-## Omarchy (Bash)
+## Omarchy (Zsh in Ghostty, Bash as the default)
+
+Use the separate [Omarchy Zsh profile](src/omarchy/zsh/README.md) for native Zsh
+history search, suggestions, highlighting, and Vi editing in Ghostty:
+
+```bash
+bash omarchy-zsh-setup.sh --ghostty
+```
+
+This keeps Bash as the login shell and preserves the existing Starship prompt.
+See the profile documentation for package dependencies, backups, and rollback.
+It does not change which terminal application the desktop launcher opens.
+
+## Omarchy (Bash fallback)
 
 Use the separate [Omarchy Bash profile](src/omarchy/README.md) to install the
 Zsh-like Bash customizations while retaining Omarchy's defaults:

@@ -1,0 +1,94 @@
+# Interactive Zsh for Omarchy terminals; independent of Omarchy's Bash rc.
+[[ -o interactive ]] || return
+[[ ${_DOTFILES_OMARCHY_ZSH_LOADED:-} == 1 ]] && return
+typeset -g _DOTFILES_OMARCHY_ZSH_LOADED=1
+typeset -g _DOTFILES_OMARCHY_ZSH_DIR=${${(%):-%N}:A:h}
+
+# Retain the desktop environment and add user tools without duplicating PATH.
+export OMARCHY_PATH=${OMARCHY_PATH:-/usr/share/omarchy}
+typeset -U path
+path+=("$HOME/.local/bin" "$HOME/.local/share/mise/shims")
+export EDITOR=${EDITOR:-vim}
+export VISUAL=${VISUAL:-$EDITOR}
+export BROWSER=${BROWSER:-omarchy-launch-browser}
+export BAT_THEME=ansi
+
+# Keep Zsh and Bash histories separate: their multiline formats differ.
+HISTFILE=$HOME/.zsh_history
+HISTSIZE=100000
+SAVEHIST=200000
+setopt EXTENDED_HISTORY SHARE_HISTORY HIST_FCNTL_LOCK
+setopt HIST_IGNORE_SPACE HIST_IGNORE_ALL_DUPS HIST_SAVE_NO_DUPS HIST_FIND_NO_DUPS
+setopt AUTO_CD AUTO_PUSHD PUSHD_IGNORE_DUPS INTERACTIVE_COMMENTS
+unsetopt BEEP
+
+# Completion is explicit (Tab), not a delayed popup while typing.
+autoload -Uz compinit
+mkdir -p -- "${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+compinit -d "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump"
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+
+bindkey -v
+KEYTIMEOUT=10
+source "$_DOTFILES_OMARCHY_ZSH_DIR/aliases.zsh"
+
+# Native integrations only. Never source the Bash profile from Zsh.
+(( $+commands[mise] )) && eval "$(mise activate zsh)"
+(( $+commands[zoxide] )) && eval "$(zoxide init zsh)"
+if (( $+commands[fzf] )) && [[ -o zle ]]; then
+  export FZF_CTRL_R_OPTS="--height=40% --layout=reverse --border${FZF_CTRL_R_OPTS:+ $FZF_CTRL_R_OPTS}"
+  [[ -r /usr/share/fzf/completion.zsh ]] && source /usr/share/fzf/completion.zsh
+  [[ -r /usr/share/fzf/key-bindings.zsh ]] && source /usr/share/fzf/key-bindings.zsh
+fi
+(( $+commands[starship] )) && eval "$(starship init zsh)"
+
+ZSH_AUTOSUGGEST_STRATEGY=(history)
+HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1
+for _dotfiles_plugin in zsh-autosuggestions zsh-history-substring-search; do
+  if [[ -r /usr/share/zsh/plugins/$_dotfiles_plugin/$_dotfiles_plugin.zsh ]]; then
+    source /usr/share/zsh/plugins/$_dotfiles_plugin/$_dotfiles_plugin.zsh
+  else
+    print -u2 "dotfiles: missing $_dotfiles_plugin (see src/omarchy/zsh/README.md)"
+  fi
+done
+unset _dotfiles_plugin
+
+if (( $+widgets[history-substring-search-up] )); then
+  # Bind both normal and application-mode arrow sequences.
+  for _dotfiles_map in viins vicmd emacs; do
+    bindkey -M "$_dotfiles_map" '^[[A' history-substring-search-up
+    bindkey -M "$_dotfiles_map" '^[OA' history-substring-search-up
+    bindkey -M "$_dotfiles_map" '^[[B' history-substring-search-down
+    bindkey -M "$_dotfiles_map" '^[OB' history-substring-search-down
+  done
+  unset _dotfiles_map
+fi
+
+# Esc after Up/Down discards the result and returns to an empty insert-mode
+# prompt. Outside history navigation it retains the usual Vi-mode behavior.
+_dotfiles_zsh_escape() {
+  if [[ $LASTWIDGET == history-substring-search-(up|down) ]]; then
+    BUFFER=''
+    CURSOR=0
+    POSTDISPLAY=''
+    region_highlight=()
+    zle .vi-insert
+  else
+    zle .vi-cmd-mode
+  fi
+}
+zle -N dotfiles-escape _dotfiles_zsh_escape
+bindkey -M viins '^[' dotfiles-escape
+bindkey -M vicmd '^[' dotfiles-escape
+
+# Keep machine-specific settings and secrets out of Git.
+[[ -r ${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles/zsh.local.zsh ]] &&
+  source "${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles/zsh.local.zsh"
+
+# Must load after widget definitions and other plugins.
+if [[ -r /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+  source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+else
+  print -u2 'dotfiles: missing zsh-syntax-highlighting (see src/omarchy/zsh/README.md)'
+fi
