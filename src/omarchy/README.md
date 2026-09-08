@@ -28,6 +28,17 @@ want to keep into the local override file described below. The installer capture
 the profile and prompt in this repo, not arbitrary changes made to your live
 files later.
 
+Additional prompt presets live in `src/omarchy/starship-prompts/`. After opening
+a fresh shell, run `starship-prompt list` to see them, then select one with:
+
+```bash
+starship-prompt easy-term
+```
+
+This copies the selected preset to `${XDG_CONFIG_HOME:-$HOME/.config}/starship.toml`.
+Open a fresh terminal, or run `exec bash`, to ensure every prompt hook is using
+it. Use `starship-prompt current` to identify the active tracked preset.
+
 - Each `.bashrc` replacement saves the previous file in `~/.bashrc.bak.<unique>/.bashrc`.
 - Each Starship replacement saves the previous config in `~/.config/starship.toml.bak.<unique>/starship.toml`.
 - Backups stay in your home/config directory, never in the repository.
@@ -130,6 +141,9 @@ for file in src/omarchy/bash/*.sh src/omarchy/tests/*.sh; do
   bash -n "$file" || break
 done
 STARSHIP_CONFIG=src/omarchy/starship.toml starship prompt >/dev/null
+for prompt in src/omarchy/starship-prompts/*.toml; do
+  STARSHIP_CONFIG="$prompt" starship prompt >/dev/null || break
+done
 bash src/omarchy/tests/test.sh
 ```
 

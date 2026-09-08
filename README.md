@@ -10,6 +10,9 @@ Zsh-like Bash customizations while retaining Omarchy's defaults:
 bash omarchy-setup.sh
 # To back up and replace an existing .bashrc after reviewing it:
 bash omarchy-setup.sh --replace-bashrc
+# In a fresh shell, list/select tracked Starship prompt presets:
+starship-prompt list
+starship-prompt easy-term
 ```
 
 Do not use `arch-linux-setup.sh` for this profile; it installs the older Zsh and

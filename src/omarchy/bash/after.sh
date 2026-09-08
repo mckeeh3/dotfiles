@@ -136,5 +136,68 @@ if command -v rg >/dev/null 2>&1; then
   alias grep='rg'
 fi
 
+_DOTFILES_OMARCHY_STARSHIP_PROMPT_DIR=$(builtin cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../starship-prompts" >/dev/null 2>&1 && pwd)
+
+starship-prompt() {
+  local prompt_dir config_home target name source found
+  prompt_dir=$_DOTFILES_OMARCHY_STARSHIP_PROMPT_DIR
+  if [[ ! -d $prompt_dir ]]; then
+    printf 'Starship prompt directory not found. Expected it next to the Bash profile.\n' >&2
+    return 1
+  fi
+  config_home=${XDG_CONFIG_HOME:-$HOME/.config}
+  target=$config_home/starship.toml
+
+  case ${1:-list} in
+    list|--list|-l)
+      printf 'Available Starship prompts:\n'
+      found=0
+      for source in "$prompt_dir"/*.toml; do
+        [[ -e $source ]] || continue
+        found=1
+        name=${source##*/}
+        printf '  %s\n' "${name%.toml}"
+      done
+      if (( ! found )); then
+        printf '  (none found in %s)\n' "$prompt_dir"
+      fi
+      printf '\nUse: starship-prompt <name>\n'
+      ;;
+    current|--current|-c)
+      if [[ -f $target ]]; then
+        for source in "$prompt_dir"/*.toml; do
+          [[ -e $source ]] || continue
+          if cmp -s -- "$source" "$target"; then
+            name=${source##*/}
+            printf '%s\n' "${name%.toml}"
+            return
+          fi
+        done
+      fi
+      printf 'custom\n'
+      ;;
+    help|--help|-h)
+      printf 'Usage: starship-prompt [list|current|<name>]\n'
+      ;;
+    *)
+      name=$1
+      if [[ ! $name =~ ^[[:alnum:]_.-]+$ ]]; then
+        printf 'Invalid Starship prompt name: %s\n' "$name" >&2
+        return 1
+      fi
+      source=$prompt_dir/$name.toml
+      if [[ ! -r $source ]]; then
+        printf 'Unknown Starship prompt: %s\n' "$name" >&2
+        starship-prompt list >&2
+        return 1
+      fi
+      mkdir -p -- "$config_home"
+      cp -- "$source" "$target"
+      printf 'Selected Starship prompt: %s\n' "$name"
+      printf 'Open a fresh terminal, or run: exec bash\n'
+      ;;
+  esac
+}
+
 # Esc for normal mode, i for insert mode.
 set -o vi

@@ -23,6 +23,7 @@ mkdir -p "$COPY_DIR/src/omarchy"
 cp "$REPO_DIR/omarchy-setup.sh" "$COPY_DIR/"
 cp "$REPO_DIR/src/omarchy/starship.toml" "$COPY_DIR/src/omarchy/"
 cp -r "$REPO_DIR/src/omarchy/bash" "$COPY_DIR/src/omarchy/"
+cp -r "$REPO_DIR/src/omarchy/starship-prompts" "$COPY_DIR/src/omarchy/"
 INSTALLER="$COPY_DIR/omarchy-setup.sh"
 
 bash "$INSTALLER" >/dev/null
@@ -118,6 +119,11 @@ for form in scalar array unset; do
     shopt -q autocd histappend cmdhist lithist
     [[ $HISTSIZE == 100000 && $HISTFILESIZE == 200000 ]]
     [[ -o vi ]]
+    starship-prompt easy-term >/dev/null
+    cmp "$HOME/.config/starship.toml" "$REPO_DIR/src/omarchy/starship-prompts/easy-term.toml"
+    [[ $(starship-prompt current) == easy-term ]]
+    starship-prompt list | command grep -q '^  tokyo-night$'
+    if starship-prompt does-not-exist >/dev/null 2>&1; then fail 'accepted unknown Starship prompt'; fi
 
     mkdir -p "$TEST_DIR/first dir" "$TEST_DIR/second dir"
     builtin cd "$TEST_DIR/first dir"

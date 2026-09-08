@@ -24,6 +24,7 @@ done
 
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 PROFILE_DIR="$SCRIPT_DIR/src/omarchy/bash"
+STARSHIP_PROMPT_DIR="$SCRIPT_DIR/src/omarchy/starship-prompts"
 STARSHIP_SOURCE="$SCRIPT_DIR/src/omarchy/starship.toml"
 TARGET_FILE="${HOME:?HOME must be set}/.bashrc"
 CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
@@ -44,8 +45,16 @@ if [[ ! -r $STARSHIP_SOURCE ]]; then
   printf 'Missing Starship config: %s\n' "$STARSHIP_SOURCE" >&2
   exit 1
 fi
+if [[ ! -d $STARSHIP_PROMPT_DIR ]]; then
+  printf 'Missing Starship prompt directory: %s\n' "$STARSHIP_PROMPT_DIR" >&2
+  exit 1
+fi
 if command -v starship >/dev/null 2>&1; then
   STARSHIP_CONFIG="$STARSHIP_SOURCE" starship prompt >/dev/null
+  for prompt in "$STARSHIP_PROMPT_DIR"/*.toml; do
+    [[ -e $prompt ]] || continue
+    STARSHIP_CONFIG="$prompt" starship prompt >/dev/null
+  done
 fi
 if [[ -d $TARGET_FILE || ( -e $TARGET_FILE && ! -f $TARGET_FILE && ! -L $TARGET_FILE ) ]]; then
   printf 'Refusing to replace a directory or special file: %s\n' "$TARGET_FILE" >&2

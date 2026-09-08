@@ -1,0 +1,124 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+add_newline = true
+command_timeout = 1000
+
+format = """
+$os\
+[](fg:#178bd7 bg:#e05273)\
+[ 󰋜 ](fg:#fff2de bg:#e05273)\
+[](fg:#e05273 bg:#8f65d4)\
+$directory\
+[](fg:#8f65d4 bg:#252945)\
+$git_branch\
+$git_status\
+[](fg:#252945)\
+$fill\
+$memory_usage\
+$nodejs\
+$golang\
+$rust\
+$cmd_duration\
+\n$time\
+\n$character"""
+
+[fill]
+symbol = ' '
+
+[os]
+disabled = false
+style = 'fg:#ffffff bg:#178bd7'
+format = '[  $symbol  ]($style)'
+
+[os.symbols]
+Windows = ''
+Ubuntu = '󰕈'
+SUSE = ''
+Raspbian = '󰐿'
+Mint = '󰣭'
+Macos = '󰀵'
+Manjaro = ''
+Linux = '󰌽'
+Gentoo = '󰣨'
+Fedora = '󰣛'
+Alpine = ''
+Amazon = ''
+Android = ''
+AOSC = ''
+Arch = '󰣇'
+Artix = '󰣇'
+EndeavourOS = ''
+CentOS = ''
+Debian = '󰣚'
+Redhat = '󱄛'
+RedHatEnterprise = '󱄛'
+Pop = ''
+
+[directory]
+style = 'fg:#eee8ff bg:#8f65d4'
+format = '[ $path ]($style)'
+truncation_length = 4
+truncation_symbol = '…/'
+home_symbol = '~'
+
+[directory.substitutions]
+'Downloads' = ' Downloads'
+'Documents' = '󰈙 Documents'
+'Music' = ' Music'
+'Pictures' = ' Pictures'
+
+[git_branch]
+symbol = ''
+style = 'fg:#ff8a33 bg:#252945'
+format = '[ $symbol$branch ]($style)'
+
+[git_status]
+style = 'fg:#ff8a33 bg:#252945'
+format = '[$ahead_behind$staged$modified$untracked$renamed$deleted$stashed ]($style)'
+ahead = '⇡${count} '
+behind = '⇣${count} '
+diverged = '⇕⇡${ahead_count}⇣${behind_count} '
+staged = '+${count} '
+modified = '~${count} '
+untracked = '?${count} '
+renamed = '»${count} '
+deleted = '✘${count} '
+stashed = '≡${count} '
+
+[memory_usage]
+disabled = false
+threshold = 0
+style = 'fg:#83f99d'
+format = '[ | RAM: ${ram_pct} ]($style)'
+
+[nodejs]
+symbol = '⬢'
+style = 'fg:#83f99d'
+format = '[ | $symbol $version ]($style)'
+
+[golang]
+symbol = ''
+style = 'fg:#83f99d'
+format = '[ | $symbol $version ]($style)'
+
+[rust]
+symbol = ''
+style = 'fg:#83f99d'
+format = '[ | $symbol $version ]($style)'
+
+[cmd_duration]
+disabled = false
+min_time = 1
+style = 'fg:#666666 bg:#d0d0d0'
+format = '[  $duration ]($style)'
+
+[time]
+disabled = false
+time_format = '%H:%M'
+style = 'fg:#333333 bg:#d0d0d0'
+format = '[  $time ]($style)'
+
+[character]
+success_symbol = '[╰─](fg:#4aa9ff)[❯](fg:#78a9ff)'
+error_symbol = '[╰─](fg:#ff5f87)[❯](fg:#ff5f87)'
+vimcmd_symbol = '[╰─](fg:#4aa9ff)[❮](fg:#78a9ff)'
