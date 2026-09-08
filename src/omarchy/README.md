@@ -1,9 +1,10 @@
 # Omarchy Bash profile
 
-Reusable Bash customizations layered around Omarchy's packaged defaults. This
-profile does not install Zsh, change the login shell, or modify anything under
-`/usr/share/omarchy/`. Do **not** run `arch-linux-setup.sh` for this profile: that
-installer deploys the older Zsh and application configs.
+Reusable Bash customizations layered around Omarchy's packaged defaults, plus a
+tracked Starship prompt. This profile does not install Zsh, change the login
+shell, or modify anything under `/usr/share/omarchy/`. Do **not** run
+`arch-linux-setup.sh` for this profile: that installer deploys the older Zsh and
+application configs.
 
 ## Install on a new Omarchy machine
 
@@ -17,20 +18,23 @@ Omarchy normally already provides a `.bashrc`, so the installer will refuse to
 replace it until you explicitly opt in. Review your existing file, then run:
 
 ```bash
-bash omarchy-setup.sh --replace-bashrc
+bash omarchy-setup.sh --replace-bashrc --replace-starship
 ```
 
-This replaces `.bashrc` with a small loader pointing at this repository. Existing
-settings are **not merged**: move any additional personal settings you want to
-keep into the local override file described below. The installer captures the
-profile in this repo, not arbitrary changes made to your live `.bashrc` later.
+This replaces `.bashrc` with a small loader pointing at this repository and
+installs `src/omarchy/starship.toml` to `${XDG_CONFIG_HOME:-$HOME/.config}/starship.toml`.
+Existing settings are **not merged**: move any additional personal settings you
+want to keep into the local override file described below. The installer captures
+the profile and prompt in this repo, not arbitrary changes made to your live
+files later.
 
-- Each replacement saves the previous file in `~/.bashrc.bak.<unique>/.bashrc`.
-- Backups stay in your home directory, never in the repository.
+- Each `.bashrc` replacement saves the previous file in `~/.bashrc.bak.<unique>/.bashrc`.
+- Each Starship replacement saves the previous config in `~/.config/starship.toml.bak.<unique>/starship.toml`.
+- Backups stay in your home/config directory, never in the repository.
 - Symlinks are backed up as symlinks; their targets are not modified.
-- An identical installation is a no-op, including with `--replace-bashrc`.
-- Modified loaders also require explicit replacement permission.
-- No packages are installed, and no other live configuration files are changed.
+- An identical installation is a no-op, including with replacement flags.
+- Modified loaders or prompt configs require explicit replacement permission.
+- No packages are installed, and no unrelated live configuration files are changed.
 
 Open a **new Bash terminal** afterward. Do not source the new profile over your
 old initialized shell: old prompt hooks, aliases, and integrations may remain.
@@ -39,7 +43,8 @@ with `--replace-bashrc` to update the loader.
 
 Omarchy's normal `~/.bash_profile` sources `~/.bashrc`. The installer leaves login
 files alone; if you have customized yours, ensure it still does so. If an Omarchy
-update/reset replaces `.bashrc`, review the new defaults and rerun the installer.
+update/reset replaces `.bashrc` or `starship.toml`, review the new defaults and
+rerun the installer.
 
 ## Dependencies
 
@@ -56,8 +61,7 @@ captured from. Missing ble.sh disables suggestions/highlighting but does not
 prevent Bash from starting. `eza`, `bat`, and `rg` aliases are enabled only when
 the commands exist. Omarchy handles initialization of Bash completion, fzf,
 zoxide, Starship, and mise; this profile does not initialize them a second time.
-No separate Starship config is included because the captured one matched
-Omarchy's default.
+The included Starship config starts from Starship's Tokyo Night preset.
 
 ## Load order and features
 
@@ -109,9 +113,11 @@ Keep another terminal open. Replace `XXXXXXXX` below with the backup suffix
 printed by the installer, and review that backup before restoring it:
 
 ```bash
-# Remove only the generated loader, then restore the original file or symlink.
-rm -- "$HOME/.bashrc"
+# Remove only the generated files, then restore the original files or symlinks.
+rm -- "$HOME/.bashrc" "${XDG_CONFIG_HOME:-$HOME/.config}/starship.toml"
 cp -a -- "$HOME/.bashrc.bak.XXXXXXXX/.bashrc" "$HOME/.bashrc"
+cp -a -- "${XDG_CONFIG_HOME:-$HOME/.config}/starship.toml.bak.XXXXXXXX/starship.toml" \
+  "${XDG_CONFIG_HOME:-$HOME/.config}/starship.toml"
 ```
 
 Open a new terminal. Backups and the repository are retained for your review.
@@ -123,6 +129,7 @@ bash -n omarchy-setup.sh
 for file in src/omarchy/bash/*.sh src/omarchy/tests/*.sh; do
   bash -n "$file" || break
 done
+STARSHIP_CONFIG=src/omarchy/starship.toml starship prompt >/dev/null
 bash src/omarchy/tests/test.sh
 ```
 
@@ -132,4 +139,5 @@ spaces/metacharacters, prompt-hook preservation, and Git/directory helpers.
 It never installs packages or changes your live configuration.
 
 After installation, manually verify suggestions/highlighting, Vi mode, fzf key
-bindings, the prompt, `z`, Git aliases, and history sharing in two fresh terminals.
+bindings, the Tokyo Night Starship prompt, `z`, Git aliases, and history sharing
+in two fresh terminals.

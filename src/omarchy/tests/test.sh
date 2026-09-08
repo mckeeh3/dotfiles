@@ -21,19 +21,37 @@ printf '# Mock defaults for installer checks only.\n' > "$OMARCHY_PATH/default/b
 COPY_DIR="$TEST_DIR/repo with spaces \$quote'"
 mkdir -p "$COPY_DIR/src/omarchy"
 cp "$REPO_DIR/omarchy-setup.sh" "$COPY_DIR/"
+cp "$REPO_DIR/src/omarchy/starship.toml" "$COPY_DIR/src/omarchy/"
 cp -r "$REPO_DIR/src/omarchy/bash" "$COPY_DIR/src/omarchy/"
 INSTALLER="$COPY_DIR/omarchy-setup.sh"
 
 bash "$INSTALLER" >/dev/null
 bash -n "$HOME/.bashrc"
+cmp "$HOME/.config/starship.toml" "$REPO_DIR/src/omarchy/starship.toml"
 # Non-interactive loading must not enable aliases, history hooks, or ble.sh.
 bash --noprofile --norc -c 'source "$HOME/.bashrc"; ! declare -F _dotfiles_history_sync >/dev/null'
 cp "$HOME/.bashrc" "$TEST_DIR/installed"
+cp "$HOME/.config/starship.toml" "$TEST_DIR/installed-starship"
 bash "$INSTALLER" >/dev/null
 cmp "$HOME/.bashrc" "$TEST_DIR/installed"
+cmp "$HOME/.config/starship.toml" "$TEST_DIR/installed-starship"
 shopt -s nullglob
 backups=("$HOME"/.bashrc.bak.*)
 (( ${#backups[@]} == 0 )) || fail 'rerun created backups'
+starship_backups=("$HOME/.config"/starship.toml.bak.*)
+(( ${#starship_backups[@]} == 0 )) || fail 'rerun created starship backups'
+
+printf '# Existing Starship settings\n' > "$HOME/.config/starship.toml"
+cp "$HOME/.config/starship.toml" "$TEST_DIR/original-starship"
+if bash "$INSTALLER" >/dev/null 2>&1; then
+  fail 'replaced existing Starship config without consent'
+fi
+cmp "$HOME/.config/starship.toml" "$TEST_DIR/original-starship"
+bash "$INSTALLER" --replace-starship >/dev/null
+starship_backups=("$HOME/.config"/starship.toml.bak.*)
+(( ${#starship_backups[@]} == 1 )) || fail 'expected one starship backup'
+cmp "${starship_backups[0]}/starship.toml" "$TEST_DIR/original-starship"
+cmp "$HOME/.config/starship.toml" "$REPO_DIR/src/omarchy/starship.toml"
 
 printf '# Existing personal settings\nalias personal=true\n' > "$HOME/.bashrc"
 cp "$HOME/.bashrc" "$TEST_DIR/original"
