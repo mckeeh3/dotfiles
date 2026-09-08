@@ -71,14 +71,16 @@ omarchy pkg aur add blesh-git
 captured from. Missing ble.sh disables suggestions/highlighting but does not
 prevent Bash from starting. `eza`, `bat`, and `rg` aliases are enabled only when
 the commands exist. Omarchy handles initialization of Bash completion, fzf,
-zoxide, Starship, and mise; this profile does not initialize them a second time.
+zoxide, Starship, and mise; this profile adds ble.sh's fzf integration rather
+than initializing those tools a second time.
 The included Starship config starts from Starship's Tokyo Night preset.
 
 ## Load order and features
 
 1. `bash/init.sh` loads Omarchy's environment bootstrap, even for non-interactive
    shells, then stops unless Bash is interactive.
-2. `bash/before.sh` loads ble.sh without attaching it (except in a dumb terminal).
+2. `bash/before.sh` enables timestamp-delimited history and loads ble.sh without
+   attaching it (except in a dumb terminal).
 3. Omarchy's `default/bash/rc` loads the maintained upstream shell defaults.
 4. `bash/after.sh` adds personal history settings, aliases, helpers, and Vi mode.
 5. An optional local override is sourced, then ble.sh attaches.
@@ -88,12 +90,23 @@ a new terminal to apply changes to the tracked profile or local overrides.
 
 Included customizations:
 
-- Autosuggestions and syntax highlighting via ble.sh; Vi editing (`Esc`, then `i`).
+- History-only inline suggestions and syntax highlighting via ble.sh; Vi editing
+  (`Esc`, then `i`). Automatic completion menus are disabled; press Tab for
+  completions.
+- Ctrl+R opens a compact fuzzy history picker (including in Vi normal mode).
+  Type search terms, press Enter to put the selection on the command line, then
+  Enter again to run it; Esc cancels. Up/Down browse history one command at a
+  time, matching your search text anywhere in the command (for example, `list`
+  matches `docker container list`), or all history when the command line is empty.
+  During Up/Down search, Esc cancels and returns to an empty prompt without
+  executing anything. Outside search, Esc still enters Vi normal mode.
 - `autocd`: enter a directory path without typing `cd`.
-- Large history, multiline entries, and append/import of new history at each
-  prompt. Existing prompt hooks and the previous command's exit status survive.
-  Unlike the original configuration, this does not clear/reload all history at
-  every prompt. It is not a transactional cross-shell deduplication mechanism.
+- Large, timestamp-delimited history with multiline entries. ble.sh handles
+  sharing through `history_share`; plain Bash falls back to append/import at each
+  prompt. Do not run raw `history -n` in a prompt hook while ble.sh is active:
+  this combination can import the entire history file as one multiline entry.
+  Existing prompt hooks and the previous command's exit status survive. This is
+  not a transactional cross-shell deduplication mechanism.
 - Oh My Zsh-style Git aliases and main/development branch helpers.
 - `git --no-pager`, customized `ls`/`ll`, `cat` → `bat`, and `grep` → `rg`.
 - `d` lists the directory stack; `1`–`5` visit its indexed entries using Bash
@@ -145,12 +158,17 @@ for prompt in src/omarchy/starship-prompts/*.toml; do
   STARSHIP_CONFIG="$prompt" starship prompt >/dev/null || break
 done
 bash src/omarchy/tests/test.sh
+# Optional: requires Python 3 and ble.sh; uses a temporary HOME and a PTY.
+python3 src/omarchy/tests/history-interactive.py
 ```
 
 The test suite uses temporary homes, a mock Omarchy path for installer checks,
 and isolated hook tests. It checks reruns, consent, backups, symlinks, paths with
 spaces/metacharacters, prompt-hook preservation, and Git/directory helpers.
-It never installs packages or changes your live configuration.
+It never installs packages or changes your live configuration. The interactive
+regression test loads a timestamp-free synthetic history file, checks that a
+prompt cycle does not merge its entries, and exercises substring Up/Down search,
+Esc cancellation to an empty prompt, and unchanged Vi behavior outside search.
 
 After installation, manually verify suggestions/highlighting, Vi mode, fzf key
 bindings, the Tokyo Night Starship prompt, `z`, Git aliases, and history sharing
