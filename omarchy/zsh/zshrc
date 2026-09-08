@@ -49,7 +49,7 @@ for _dotfiles_plugin in zsh-autosuggestions zsh-history-substring-search; do
   if [[ -r /usr/share/zsh/plugins/$_dotfiles_plugin/$_dotfiles_plugin.zsh ]]; then
     source /usr/share/zsh/plugins/$_dotfiles_plugin/$_dotfiles_plugin.zsh
   else
-    print -u2 "dotfiles: missing $_dotfiles_plugin (see src/omarchy/zsh/README.md)"
+    print -u2 "dotfiles: missing $_dotfiles_plugin (see omarchy/zsh/README.md)"
   fi
 done
 unset _dotfiles_plugin
@@ -90,5 +90,5 @@ bindkey -M vicmd '^[' dotfiles-escape
 if [[ -r /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
   source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 else
-  print -u2 'dotfiles: missing zsh-syntax-highlighting (see src/omarchy/zsh/README.md)'
+  print -u2 'dotfiles: missing zsh-syntax-highlighting (see omarchy/zsh/README.md)'
 fi

@@ -5,13 +5,14 @@ This repository stores shell/editor terminal dotfiles for macOS and Arch Linux.
 
 - `src/arch-linux/`: shared Arch configs (`zshrc`, `vimrc`, `alacritty.toml`, etc.)
 - `src/mac/`: shared macOS configs with matching file names
-- `arch-linux/` and `mac/`: host-level app configs (for example `ghostty-config`)
+- `arch-linux/` and `mac/`: platform app configs (for example `ghostty-config`)
+- `omarchy/`: Omarchy Bash/Zsh profiles, Ghostty shell config, Starship presets, and tests
 - `src/tmux/`: tmux local config (`tmux.conf.local`)
 - `src/lvim/`: LunarVim config (`config.lua`)
 - `src/neovim/scripts/`: helper scripts for moving Neovim profile folders
 - `zed/`: editor-specific local settings
 
-Prefer updating platform-shared files under `src/` first, then apply machine-specific overrides only where needed.
+The repository is moving away from `src/`. Prefer the top-level platform directories (`arch-linux/`, `mac/`, `omarchy/`) for new and migrated configs. Keep unrelated legacy files in place unless explicitly migrating them; apply machine-specific overrides only where needed.
 
 ## Build, Test, and Development Commands
 There is no build step; changes are validated by linting and loading configs.
@@ -25,7 +26,7 @@ There is no build step; changes are validated by linting and loading configs.
 - Shell scripts: Bash with 2-space indentation; keep scripts idempotent and guard destructive moves with checks.
 - Lua (`src/lvim/config.lua`): concise option blocks; group plugin declarations in `lvim.plugins`.
 - Config filenames should match target tools exactly (`zshrc`, `vimrc`, `alacritty.toml`).
-- New platform files should follow existing layout: `src/<platform>/<tool-file>`.
+- New platform files should follow the top-level layout: `<platform>/<tool-file>` (or the platform's existing tool subdirectory).
 
 ## Testing Guidelines
 No centralized automated test suite exists. Use tool-native parse checks and manual smoke tests:

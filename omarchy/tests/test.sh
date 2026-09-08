@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../../.." && pwd)
+REPO_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)
 TEST_DIR=$(mktemp -d)
 trap 'rm -rf -- "$TEST_DIR"' EXIT
 
@@ -19,16 +19,16 @@ printf '# Mock defaults for installer checks only.\n' > "$OMARCHY_PATH/default/b
 
 # Include spaces and shell metacharacters to test generated source-line quoting.
 COPY_DIR="$TEST_DIR/repo with spaces \$quote'"
-mkdir -p "$COPY_DIR/src/omarchy"
+mkdir -p "$COPY_DIR/omarchy"
 cp "$REPO_DIR/omarchy-setup.sh" "$COPY_DIR/"
-cp "$REPO_DIR/src/omarchy/starship.toml" "$COPY_DIR/src/omarchy/"
-cp -r "$REPO_DIR/src/omarchy/bash" "$COPY_DIR/src/omarchy/"
-cp -r "$REPO_DIR/src/omarchy/starship-prompts" "$COPY_DIR/src/omarchy/"
+cp "$REPO_DIR/omarchy/starship.toml" "$COPY_DIR/omarchy/"
+cp -r "$REPO_DIR/omarchy/bash" "$COPY_DIR/omarchy/"
+cp -r "$REPO_DIR/omarchy/starship-prompts" "$COPY_DIR/omarchy/"
 INSTALLER="$COPY_DIR/omarchy-setup.sh"
 
 bash "$INSTALLER" >/dev/null
 bash -n "$HOME/.bashrc"
-cmp "$HOME/.config/starship.toml" "$REPO_DIR/src/omarchy/starship.toml"
+cmp "$HOME/.config/starship.toml" "$REPO_DIR/omarchy/starship.toml"
 # Non-interactive loading must not enable aliases, history hooks, or ble.sh.
 bash --noprofile --norc -c 'source "$HOME/.bashrc"; ! declare -F _dotfiles_history_sync >/dev/null'
 cp "$HOME/.bashrc" "$TEST_DIR/installed"
@@ -52,7 +52,7 @@ bash "$INSTALLER" --replace-starship >/dev/null
 starship_backups=("$HOME/.config"/starship.toml.bak.*)
 (( ${#starship_backups[@]} == 1 )) || fail 'expected one starship backup'
 cmp "${starship_backups[0]}/starship.toml" "$TEST_DIR/original-starship"
-cmp "$HOME/.config/starship.toml" "$REPO_DIR/src/omarchy/starship.toml"
+cmp "$HOME/.config/starship.toml" "$REPO_DIR/omarchy/starship.toml"
 
 printf '# Existing personal settings\nalias personal=true\n' > "$HOME/.bashrc"
 cp "$HOME/.bashrc" "$TEST_DIR/original"
@@ -103,14 +103,14 @@ for form in scalar array unset; do
       scalar) PROMPT_COMMAND='printf scalar' ;;
       array) PROMPT_COMMAND=('printf first' 'printf second') ;;
     esac
-    source "$REPO_DIR/src/omarchy/bash/after.sh"
+    source "$REPO_DIR/omarchy/bash/after.sh"
     [[ ${PROMPT_COMMAND[0]} == _dotfiles_history_sync ]] || fail 'missing history hook'
     case "$form" in
       scalar) [[ ${PROMPT_COMMAND[1]} == 'printf scalar' ]] ;;
       array) [[ ${PROMPT_COMMAND[1]} == 'printf first' && ${PROMPT_COMMAND[2]} == 'printf second' ]] ;;
     esac
     count=${#PROMPT_COMMAND[@]}
-    source "$REPO_DIR/src/omarchy/bash/after.sh"
+    source "$REPO_DIR/omarchy/bash/after.sh"
     (( ${#PROMPT_COMMAND[@]} == count )) || fail 'duplicate prompt hook'
     if (exit 7); then :; else
       if _dotfiles_history_sync; then fail 'lost exit status'; else [[ $? == 7 ]]; fi
@@ -120,7 +120,7 @@ for form in scalar array unset; do
     [[ $HISTSIZE == 100000 && $HISTFILESIZE == 200000 ]]
     [[ -o vi ]]
     starship-prompt easy-term >/dev/null
-    cmp "$HOME/.config/starship.toml" "$REPO_DIR/src/omarchy/starship-prompts/easy-term.toml"
+    cmp "$HOME/.config/starship.toml" "$REPO_DIR/omarchy/starship-prompts/easy-term.toml"
     [[ $(starship-prompt current) == easy-term ]]
     starship-prompt list | command grep -q '^  tokyo-night$'
     if starship-prompt does-not-exist >/dev/null 2>&1; then fail 'accepted unknown Starship prompt'; fi

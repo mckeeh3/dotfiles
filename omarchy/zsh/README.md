@@ -28,7 +28,7 @@ omarchy restart terminal
 The installer:
 
 - Creates `~/.zshrc` as a loader pointing at this repository.
-- With `--ghostty`, appends an include of `src/omarchy/ghostty-zsh.conf` to
+- With `--ghostty`, appends an include of `omarchy/ghostty-zsh.conf` to
   `${XDG_CONFIG_HOME:-$HOME/.config}/ghostty/config`. This sets
   `command = /usr/bin/zsh` without replacing your font, theme, or keybindings.
 - Backs up changed existing files in private `*.bak.XXXXXXXX` directories next
@@ -89,10 +89,10 @@ open a new shell or run `exec zsh` to apply edits.
 
 ```bash
 bash -n omarchy-zsh-setup.sh
-zsh -n src/omarchy/zsh/zshrc
-zsh -n src/omarchy/zsh/aliases.zsh
-bash src/omarchy/tests/zsh-setup.sh
-python3 src/omarchy/tests/zsh-interactive.py
+zsh -n omarchy/zsh/zshrc
+zsh -n omarchy/zsh/aliases.zsh
+bash omarchy/tests/zsh-setup.sh
+python3 omarchy/tests/zsh-interactive.py
 ghostty +validate-config
 ```
 

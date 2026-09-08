@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-repo=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../../.." && pwd)
+repo=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)
 tmp=$(mktemp -d)
 trap 'rm -rf -- "$tmp"' EXIT
 export HOME="$tmp/home"
@@ -13,10 +13,10 @@ printf 'font-size = 12\n' > "$XDG_CONFIG_HOME/ghostty/config"
 
 # Exercise loader quoting with a repository path containing spaces.
 copy="$tmp/repo with spaces"
-mkdir -p "$copy/src/omarchy"
+mkdir -p "$copy/omarchy"
 cp "$repo/omarchy-zsh-setup.sh" "$copy/"
-cp -r "$repo/src/omarchy/zsh" "$copy/src/omarchy/"
-cp "$repo/src/omarchy/ghostty-zsh.conf" "$copy/src/omarchy/"
+cp -r "$repo/omarchy/zsh" "$copy/omarchy/"
+cp "$repo/omarchy/ghostty-zsh.conf" "$copy/omarchy/"
 installer="$copy/omarchy-zsh-setup.sh"
 bash "$installer" --ghostty >/dev/null
 zsh -n "$HOME/.zshrc"

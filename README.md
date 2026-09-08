@@ -3,7 +3,7 @@
 
 ## Omarchy (Zsh in Ghostty, Bash as the default)
 
-Use the separate [Omarchy Zsh profile](src/omarchy/zsh/README.md) for native Zsh
+Use the separate [Omarchy Zsh profile](omarchy/zsh/README.md) for native Zsh
 history search, suggestions, highlighting, and Vi editing in Ghostty:
 
 ```bash
@@ -16,7 +16,7 @@ It does not change which terminal application the desktop launcher opens.
 
 ## Omarchy (Bash fallback)
 
-Use the separate [Omarchy Bash profile](src/omarchy/README.md) to install the
+Use the separate [Omarchy Bash profile](omarchy/README.md) to install the
 Zsh-like Bash customizations while retaining Omarchy's defaults:
 
 ```bash

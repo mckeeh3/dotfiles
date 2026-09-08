@@ -22,13 +22,13 @@ bash omarchy-setup.sh --replace-bashrc --replace-starship
 ```
 
 This replaces `.bashrc` with a small loader pointing at this repository and
-installs `src/omarchy/starship.toml` to `${XDG_CONFIG_HOME:-$HOME/.config}/starship.toml`.
+installs `omarchy/starship.toml` to `${XDG_CONFIG_HOME:-$HOME/.config}/starship.toml`.
 Existing settings are **not merged**: move any additional personal settings you
 want to keep into the local override file described below. The installer captures
 the profile and prompt in this repo, not arbitrary changes made to your live
 files later.
 
-Additional prompt presets live in `src/omarchy/starship-prompts/`. After opening
+Additional prompt presets live in `omarchy/starship-prompts/`. After opening
 a fresh shell, run `starship-prompt list` to see them, then select one with:
 
 ```bash
@@ -150,16 +150,16 @@ Open a new terminal. Backups and the repository are retained for your review.
 
 ```bash
 bash -n omarchy-setup.sh
-for file in src/omarchy/bash/*.sh src/omarchy/tests/*.sh; do
+for file in omarchy/bash/*.sh omarchy/tests/*.sh; do
   bash -n "$file" || break
 done
-STARSHIP_CONFIG=src/omarchy/starship.toml starship prompt >/dev/null
-for prompt in src/omarchy/starship-prompts/*.toml; do
+STARSHIP_CONFIG=omarchy/starship.toml starship prompt >/dev/null
+for prompt in omarchy/starship-prompts/*.toml; do
   STARSHIP_CONFIG="$prompt" starship prompt >/dev/null || break
 done
-bash src/omarchy/tests/test.sh
+bash omarchy/tests/test.sh
 # Optional: requires Python 3 and ble.sh; uses a temporary HOME and a PTY.
-python3 src/omarchy/tests/history-interactive.py
+python3 omarchy/tests/history-interactive.py
 ```
 
 The test suite uses temporary homes, a mock Omarchy path for installer checks,

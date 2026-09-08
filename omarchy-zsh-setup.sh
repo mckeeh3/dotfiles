@@ -22,13 +22,13 @@ while (( $# )); do
 done
 [[ -z ${ZDOTDIR:-} || $ZDOTDIR == "$HOME" ]] || { printf 'Custom ZDOTDIR; refusing automatic installation.\n' >&2; exit 1; }
 repo=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
-profile=$repo/src/omarchy/zsh/zshrc
+profile=$repo/omarchy/zsh/zshrc
 config=${XDG_CONFIG_HOME:-$HOME/.config}/ghostty/config
-include=$repo/src/omarchy/ghostty-zsh.conf
+include=$repo/omarchy/ghostty-zsh.conf
 target=$HOME/.zshrc
 command -v zsh >/dev/null
 zsh -n "$profile"
-zsh -n "$repo/src/omarchy/zsh/aliases.zsh"
+zsh -n "$repo/omarchy/zsh/aliases.zsh"
 for file in "$target"; do
   [[ ! -d $file && ( ! -e $file || -f $file ) ]] || { printf 'Not a regular file: %s\n' "$file" >&2; exit 1; }
 done

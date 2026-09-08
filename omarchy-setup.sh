@@ -23,9 +23,9 @@ while (( $# )); do
 done
 
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
-PROFILE_DIR="$SCRIPT_DIR/src/omarchy/bash"
-STARSHIP_PROMPT_DIR="$SCRIPT_DIR/src/omarchy/starship-prompts"
-STARSHIP_SOURCE="$SCRIPT_DIR/src/omarchy/starship.toml"
+PROFILE_DIR="$SCRIPT_DIR/omarchy/bash"
+STARSHIP_PROMPT_DIR="$SCRIPT_DIR/omarchy/starship-prompts"
+STARSHIP_SOURCE="$SCRIPT_DIR/omarchy/starship.toml"
 TARGET_FILE="${HOME:?HOME must be set}/.bashrc"
 CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 STARSHIP_TARGET="$CONFIG_HOME/starship.toml"
@@ -119,7 +119,7 @@ fi
 printf '\nDependency check (no packages will be installed):\n'
 for tool in git fzf zoxide starship eza bat rg; do
   if ! command -v "$tool" >/dev/null 2>&1; then
-    printf '  Missing command: %s (see src/omarchy/README.md)\n' "$tool"
+    printf '  Missing command: %s (see omarchy/README.md)\n' "$tool"
   fi
 done
 if [[ ! -r /usr/share/bash-completion/bash_completion ]]; then
