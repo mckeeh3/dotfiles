@@ -65,22 +65,9 @@ if (( $+widgets[history-substring-search-up] )); then
   unset _dotfiles_map
 fi
 
-# Esc after Up/Down discards the result and returns to an empty insert-mode
-# prompt. Outside history navigation it retains the usual Vi-mode behavior.
-_dotfiles_zsh_escape() {
-  if [[ $LASTWIDGET == history-substring-search-(up|down) ]]; then
-    BUFFER=''
-    CURSOR=0
-    POSTDISPLAY=''
-    region_highlight=()
-    zle .vi-insert
-  else
-    zle .vi-cmd-mode
-  fi
-}
-zle -N dotfiles-escape _dotfiles_zsh_escape
-bindkey -M viins '^[' dotfiles-escape
-bindkey -M vicmd '^[' dotfiles-escape
+# Preserve the command, including history results, when entering Vi normal mode.
+bindkey -M viins '^[' vi-cmd-mode
+bindkey -M vicmd '^[' vi-cmd-mode
 
 # Keep machine-specific settings and secrets out of Git.
 [[ -r ${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles/zsh.local.zsh ]] &&

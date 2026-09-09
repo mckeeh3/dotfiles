@@ -63,13 +63,15 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-zsh-test-") as home:
         press(b"\x1b[A", "nmcli connection list")
         press(b"\x1b[A", "docker container list")
         press(b"\x1b[B", "nmcli connection list")
-        press(b"\x1b", "", "viins")
-        press(b"hello", "hello")
+        press(b"\x1b", "nmcli connection list", "vicmd")
+        press(b"0Dihello", "hello", "viins")
         press(b"\x1b", "hello", "vicmd")
         # Return to insert mode, clear the line, and test a separate search.
         press(b"0Didocker", "docker")
         press(b"\x1bOA", "docker container list")
-        press(b"\x1b", "", "viins")
+        press(b"\x1b", "docker container list", "vicmd")
+        press(b"A --help", "docker container list --help", "viins")
+        press(b"\x1b", "docker container list --help", "vicmd")
         assert (root / ".bash_history").read_text() == "bash history must stay untouched\n"
         print("Zsh interactive test passed: substring arrows, Esc, Vi mode, separate history.")
     finally:

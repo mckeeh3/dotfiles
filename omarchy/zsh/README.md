@@ -53,9 +53,9 @@ say Bash because it describes the account's login shell.
 
 - Type `list`, then Up/Down to recall matching history commands one at a time.
   Matches can occur anywhere in a command. Both terminal arrow encodings work.
-- Esc immediately after Up/Down discards the result and returns to an empty
-  insert-mode prompt. Outside history navigation, Esc enters Vi normal mode;
-  `i` returns to insert mode. Ctrl+C also abandons the current command line.
+- Esc enters Vi normal mode without clearing the command, including after
+  Up/Down history navigation; `i` returns to insert mode. Ctrl+C abandons the
+  current command line.
 - Ctrl+R opens fzf history search. Enter selects a command for editing, not
   immediate execution; Esc dismisses the picker.
 - Suggestions come from history only. Right-arrow accepts an inline suggestion
@@ -98,7 +98,7 @@ ghostty +validate-config
 
 Tests use temporary homes, synthetic history, and a PTY. They check installer
 consent/backups/reruns, path quoting, preservation of Bash and Starship config,
-substring arrows, Esc cancellation, and ordinary Vi mode without executing
+substring arrows and Esc preserving recalled commands for Vi editing without executing
 recalled commands or touching live history.
 
 ## Roll back
