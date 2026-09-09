@@ -11,7 +11,6 @@ fi
 _DOTFILES_OMARCHY_BASH_LOADED=1
 _DOTFILES_OMARCHY_BASH_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 
-source "$_DOTFILES_OMARCHY_BASH_DIR/before.sh"
 source "${OMARCHY_PATH:-/usr/share/omarchy}/default/bash/rc"
 source "$_DOTFILES_OMARCHY_BASH_DIR/after.sh"
 unset _DOTFILES_OMARCHY_BASH_DIR
@@ -19,9 +18,4 @@ unset _DOTFILES_OMARCHY_BASH_DIR
 # Machine-specific settings stay outside the repository.
 if [[ -r ${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles/bash.local.sh ]]; then
   source "${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles/bash.local.sh"
-fi
-
-# Attach only after Omarchy's prompt/completion setup and personal overrides.
-if [[ ${BLE_VERSION:-} ]] && declare -F ble-attach >/dev/null; then
-  ble-attach
 fi

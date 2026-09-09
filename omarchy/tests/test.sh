@@ -118,7 +118,6 @@ for form in scalar array unset; do
     command grep -q '^dotfiles-history-test$' "$HISTFILE" || fail 'history was not appended'
     shopt -q autocd histappend cmdhist lithist
     [[ $HISTSIZE == 100000 && $HISTFILESIZE == 200000 ]]
-    [[ -o vi ]]
     starship-prompt easy-term >/dev/null
     cmp "$HOME/.config/starship.toml" "$REPO_DIR/omarchy/starship-prompts/easy-term.toml"
     [[ $(starship-prompt current) == easy-term ]]

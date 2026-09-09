@@ -34,7 +34,7 @@ if [[ ! -r ${OMARCHY_PATH:-/usr/share/omarchy}/default/bash/rc ]]; then
   printf 'Omarchy Bash defaults not found. Run this on an Omarchy installation.\n' >&2
   exit 1
 fi
-for file in init.sh before.sh after.sh; do
+for file in init.sh after.sh; do
   if [[ ! -r $PROFILE_DIR/$file ]]; then
     printf 'Missing profile file: %s\n' "$PROFILE_DIR/$file" >&2
     exit 1
@@ -124,8 +124,5 @@ for tool in git fzf zoxide starship eza bat rg; do
 done
 if [[ ! -r /usr/share/bash-completion/bash_completion ]]; then
   printf '  Missing Bash completion: install bash-completion.\n'
-fi
-if [[ ! -r /usr/share/blesh/ble.sh ]]; then
-  printf '  Missing ble.sh: install blesh-git from the AUR for suggestions/highlighting.\n'
 fi
 printf '\nOpen a fresh Bash terminal to apply. Keep this repository at its current path.\n'

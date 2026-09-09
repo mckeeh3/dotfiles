@@ -1,7 +1,8 @@
 # Omarchy Bash profile
 
 Reusable Bash customizations layered around Omarchy's packaged defaults, plus a
-tracked Starship prompt. This profile does not install Zsh, change the login
+tracked Starship prompt. Bash stays the system/login-shell fallback; use the
+[separate Zsh setup](zsh/README.md) for Ghostty. This profile does not install Zsh, change the login
 shell, or modify anything under `/usr/share/omarchy/`. Do **not** run
 `arch-linux-setup.sh` for this profile: that installer deploys the older Zsh and
 application configs.
@@ -64,49 +65,39 @@ are already provided by Omarchy. If needed, use the following commands yourself:
 
 ```bash
 omarchy pkg add bash-completion git fzf zoxide starship eza bat ripgrep
-omarchy pkg aur add blesh-git
 ```
 
-`blesh-git` supplies `/usr/share/blesh/ble.sh` on the machine this profile was
-captured from. Missing ble.sh disables suggestions/highlighting but does not
-prevent Bash from starting. `eza`, `bat`, and `rg` aliases are enabled only when
-the commands exist. Omarchy handles initialization of Bash completion, fzf,
-zoxide, Starship, and mise; this profile adds ble.sh's fzf integration rather
-than initializing those tools a second time.
+`eza`, `bat`, and `rg` aliases are enabled only when the commands exist.
+Omarchy handles initialization of Bash completion, fzf, zoxide, Starship, and
+mise. This profile restores native Readline Ctrl+R after Omarchy's fzf setup;
+other fzf integrations remain available. ble.sh is no longer loaded or required.
 The included Starship config starts from Starship's Tokyo Night preset.
 
 ## Load order and features
 
 1. `bash/init.sh` loads Omarchy's environment bootstrap, even for non-interactive
    shells, then stops unless Bash is interactive.
-2. `bash/before.sh` enables timestamp-delimited history and loads ble.sh without
-   attaching it (except in a dumb terminal).
-3. Omarchy's `default/bash/rc` loads the maintained upstream shell defaults.
-4. `bash/after.sh` adds personal history settings, aliases, helpers, and Vi mode.
-5. An optional local override is sourced, then ble.sh attaches.
+2. Omarchy's `default/bash/rc` loads the maintained upstream shell defaults.
+3. `bash/after.sh` adds history settings, aliases, helpers, and native Emacs-mode
+   Readline editing with Ctrl+R reverse search.
+4. An optional local override is sourced.
 
 Repeatedly sourcing the loader in the same shell does not reinitialize it. Open
 a new terminal to apply changes to the tracked profile or local overrides.
 
 Included customizations:
 
-- History-only inline suggestions and syntax highlighting via ble.sh; Vi editing
-  (`Esc`, then `i`). Automatic completion menus are disabled; press Tab for
-  completions.
-- Ctrl+R opens a compact fuzzy history picker (including in Vi normal mode).
-  Type search terms, press Enter to put the selection on the command line, then
-  Enter again to run it; Esc cancels. Up/Down browse history one command at a
-  time, matching your search text anywhere in the command (for example, `list`
-  matches `docker container list`), or all history when the command line is empty.
-  During Up/Down search, Esc cancels and returns to an empty prompt without
-  executing anything. Outside search, Esc still enters Vi normal mode.
+- Native Bash editing, without ble.sh suggestions, highlighting, or Vi mode.
+- Ctrl+R incrementally searches history; press Ctrl+R again for older matches.
+  Enter runs the match; Esc leaves it on the command line for editing, and
+  Ctrl+G cancels the search. Unlike the old picker, Enter executes immediately.
+- Up/Down retain Omarchy's prefix-history search. Ctrl+P/Ctrl+N browse previous/
+  next commands. `!!` reruns the last command; `!prefix` reruns the latest command
+  starting with that prefix. These execute on Enter, so review before rerunning.
 - `autocd`: enter a directory path without typing `cd`.
-- Large, timestamp-delimited history with multiline entries. ble.sh handles
-  sharing through `history_share`; plain Bash falls back to append/import at each
-  prompt. Do not run raw `history -n` in a prompt hook while ble.sh is active:
-  this combination can import the entire history file as one multiline entry.
-  Existing prompt hooks and the previous command's exit status survive. This is
-  not a transactional cross-shell deduplication mechanism.
+- Large, timestamp-delimited history with multiline entries, appended/imported
+  at each prompt. Existing prompt hooks and the previous command's exit status
+  survive. This is not a transactional cross-shell deduplication mechanism.
 - Oh My Zsh-style Git aliases and main/development branch helpers.
 - `git --no-pager`, customized `ls`/`ll`, `cat` → `bat`, and `grep` → `rg`.
 - `d` lists the directory stack; `1`–`5` visit its indexed entries using Bash
@@ -158,7 +149,7 @@ for prompt in omarchy/starship-prompts/*.toml; do
   STARSHIP_CONFIG="$prompt" starship prompt >/dev/null || break
 done
 bash omarchy/tests/test.sh
-# Optional: requires Python 3 and ble.sh; uses a temporary HOME and a PTY.
+# Requires Python 3; uses a temporary HOME and a PTY.
 python3 omarchy/tests/history-interactive.py
 ```
 
@@ -166,10 +157,11 @@ The test suite uses temporary homes, a mock Omarchy path for installer checks,
 and isolated hook tests. It checks reruns, consent, backups, symlinks, paths with
 spaces/metacharacters, prompt-hook preservation, and Git/directory helpers.
 It never installs packages or changes your live configuration. The interactive
-regression test loads a timestamp-free synthetic history file, checks that a
-prompt cycle does not merge its entries, and exercises substring Up/Down search,
-Esc cancellation to an empty prompt, and unchanged Vi behavior outside search.
+regression test checks native Ctrl+R after an fzf-style binding, command recall,
+and `!!` rerun using synthetic history.
 
-After installation, manually verify suggestions/highlighting, Vi mode, fzf key
-bindings, the Tokyo Night Starship prompt, `z`, Git aliases, and history sharing
-in two fresh terminals.
+After installation, manually verify Ctrl+R, command recall, the Starship prompt,
+`z`, Git aliases, and history sharing in two fresh Bash terminals. Existing
+installations pointing at this repo need only a fresh Bash process (`exec bash`),
+not a reinstall. Do not source over an already attached ble.sh session. No
+packages, history files, Ghostty settings, or Zsh configuration are removed.

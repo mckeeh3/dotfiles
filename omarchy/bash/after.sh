@@ -4,13 +4,14 @@ shopt -s autocd histappend cmdhist lithist
 HISTSIZE=100000
 HISTFILESIZE=200000
 HISTCONTROL=ignoreboth:erasedups
+# Delimit multiline entries when saving history.
+HISTTIMEFORMAT='%F %T '
 
-# Plain Bash fallback: append/import new entries without clearing history.
-# ble.sh uses history_share below instead of this hook's raw history -n.
+# Append/import new entries without clearing history.
 # Preserve both the previous exit status (for Starship) and existing hooks.
 _dotfiles_history_sync() {
   local last_status=$?
-  if [[ -z ${BLE_VERSION:-} && -n ${HISTFILE:-} ]]; then
+  if [[ -n ${HISTFILE:-} ]]; then
     history -a
     history -n
   fi
@@ -200,48 +201,10 @@ starship-prompt() {
   esac
 }
 
-# Esc for normal mode, i for insert mode.
-set -o vi
-
-# Keep history search compact; preserve any machine-specific fzf options.
-export FZF_CTRL_R_OPTS="--height=40% --layout=reverse --border${FZF_CTRL_R_OPTS:+ $FZF_CTRL_R_OPTS}"
-
-if [[ ${BLE_VERSION:-} ]]; then
-  # Let ble.sh manage sharing; raw prompt-time imports can corrupt its history.
-  bleopt history_share=1
-
-  # Suggest one historical command, without running completion while typing.
-  # Full completion menus remain available on Tab only.
-  bleopt complete_auto_complete=1
-  bleopt complete_auto_complete_opts=syntax-disabled
-  bleopt complete_auto_menu=0
-
-  # Readline's fzf bindings alone are not enough when ble.sh owns line editing.
-  if command -v fzf >/dev/null 2>&1; then
-    ble-import integration/fzf-completion
-    ble-import integration/fzf-key-bindings
-  fi
-
-  for _dotfiles_keymap in emacs vi_imap vi_nmap; do
-    ble-bind -m "$_dotfiles_keymap" -f up history-substring-search-backward
-    ble-bind -m "$_dotfiles_keymap" -f down history-substring-search-forward
-  done
-  unset _dotfiles_keymap
-
-  # Cancel even an in-progress search, discard its query, and leave a fresh
-  # prompt. Scope Esc to search so normal Vi editing remains unchanged.
-  ble/widget/dotfiles-history-cancel() {
-    ble/util/fiberchain#clear
-    ble/widget/nsearch/cancel
-    ble/widget/discard-line
-  }
-  ble-bind -m nsearch -f ESC dotfiles-history-cancel
-  ble-bind -m nsearch -f 'C-[' dotfiles-history-cancel
-elif [[ $- == *i* ]]; then
-  # The same substring navigation when ble.sh is unavailable.
-  for _dotfiles_keymap in emacs-standard vi-insert vi-command; do
-    bind -m "$_dotfiles_keymap" '"\e[A": history-substring-search-backward'
-    bind -m "$_dotfiles_keymap" '"\e[B": history-substring-search-forward'
-  done
-  unset _dotfiles_keymap
+# Use ordinary Bash/Readline editing rather than emulating Zsh.
+# Omarchy loads fzf first; remove its shell-command binding before rebinding C-r.
+if [[ $- == *i* ]]; then
+  set -o emacs
+  bind -m emacs-standard -r '\C-r'
+  bind -m emacs-standard '"\C-r": reverse-search-history'
 fi

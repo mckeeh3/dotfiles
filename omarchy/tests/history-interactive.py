@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""Optional ble.sh regression test. Uses only synthetic history in a temporary HOME."""
+"""Native Bash history regression test; isolated HOME, inputrc, and PTY."""
 import fcntl
 import os
 from pathlib import Path
 import pty
-import re
 import select
 import shlex
 import struct
@@ -14,80 +13,60 @@ import termios
 import time
 
 PROFILE = Path(__file__).resolve().parents[1] / "bash"
-if not Path("/usr/share/blesh/ble.sh").is_file():
-    raise SystemExit("SKIP: ble.sh is not installed")
-
 with tempfile.TemporaryDirectory(prefix="dotfiles-history-test-") as home:
     root = Path(home)
-    (root / ".cache").mkdir()
-    commands = ["echo unrelated", "docker container list", "echo other",
-                "nmcli connection list", "echo final"]
-    (root / ".bash_history").write_text("\n".join(commands) + "\n")
+    (root / ".inputrc").write_text("")
+    (root / ".bash_history").write_text("echo unrelated\necho recall-marker\necho final\n")
     (root / ".bashrc").write_text(
-        f"source {shlex.quote(str(PROFILE / 'before.sh'))}\n"
+        # Simulate the binding installed by Omarchy's fzf integration.
+        "bind -x '\"\\C-r\":touch \"$HOME/fzf-called\"'\n"
         f"source {shlex.quote(str(PROFILE / 'after.sh'))}\n"
         "PS1='HISTORY_TEST> '\n"
-        "ble/widget/test-snapshot() { printf '%s\\n' \"$_ble_edit_str\" "
-        "\"$_ble_decode_keymap\" > \"$HOME/state\"; }\n"
-        "ble-bind -m vi_imap -f 'C-x C-q' test-snapshot\n"
-        "ble-bind -m vi_nmap -f 'C-x C-q' test-snapshot\n"
-        "ble-attach\n"
+        "snapshot() { printf '%s' \"$READLINE_LINE\" > \"$HOME/state\"; }\n"
+        "bind -x '\"\\C-x\\C-t\":snapshot'\n"
     )
     master, slave = pty.openpty()
     fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack("HHHH", 24, 100, 0, 0))
+    env = dict(os.environ, HOME=home, XDG_CONFIG_HOME=home + "/.config",
+               INPUTRC=str(root / ".inputrc"), HISTFILE=str(root / ".bash_history"),
+               TERM="xterm-256color")
+    env.pop("PROMPT_COMMAND", None)
     shell = subprocess.Popen(
         ["bash", "--noprofile", "--rcfile", str(root / ".bashrc"), "-i"],
-        stdin=slave, stdout=slave, stderr=slave, start_new_session=True,
-        env=dict(os.environ, HOME=home, XDG_CONFIG_HOME=home + "/.config",
-                 XDG_CACHE_HOME=home + "/.cache", TERM="xterm-256color"),
+        stdin=slave, stdout=slave, stderr=slave, start_new_session=True, env=env,
     )
     os.close(slave)
 
-    def drain(seconds):
+    def drain(seconds=0.5):
         output = b""
         deadline = time.monotonic() + seconds
         while time.monotonic() < deadline:
-            if select.select([master], [], [], 0.1)[0]:
+            if select.select([master], [], [], 0.05)[0]:
                 output += os.read(master, 65536)
-        text = output.decode(errors="replace")
-        return re.sub(r"\x1b\[[0-?]*[ -/]*[@-~]", "", text)
+        return output
+
+    def snapshot(expected):
+        os.write(master, b"\x18\x14")
+        drain()
+        assert (root / "state").read_text() == expected
 
     try:
-        drain(5)
-        # An actual prompt cycle matters: history -s alone missed the corruption.
-        os.write(master, b'HISTTIMEFORMAT=__ENTRY__ builtin history > "$HOME/dump"\n')
-        drain(2)
-        entries = re.split(r"^ *\d+[ *]+__ENTRY__", (root / "dump").read_text(),
-                           flags=re.MULTILINE)[1:]
-        assert len(entries) == len(commands) + 1, "unexpected history entry count"
-        assert all(len(entry.splitlines()) == 1 for entry in entries), \
-            "separate commands were imported as a giant multiline entry"
-
-        os.write(master, b"list")
         drain(1)
-        for key, expected in [(b"\x1b[A", commands[3]),
-                              (b"\x1b[A", commands[1]),
-                              (b"\x1b[B", commands[3])]:
-            os.write(master, key)
-            output = drain(1)
-            assert expected in output, f"arrow search did not recall {expected!r}"
-            assert "echo unrelated" not in output, "arrow recalled an entire history block"
-        os.write(master, b"\x1b")
-        drain(1)
-        os.write(master, b"\x18\x11")  # Snapshot without executing the command line.
-        drain(1)
-        assert (root / "state").read_text() == "\nvi_imap\n", \
-            f"Esc did not cancel search to an empty insert-mode prompt: {(root / 'state').read_text()!r}"
-
-        os.write(master, b"hello")
-        drain(1)
-        os.write(master, b"\x1b")
-        drain(1)
-        os.write(master, b"\x18\x11")
-        drain(1)
-        assert (root / "state").read_text() == "hello\nvi_nmap\n", \
-            "Esc outside search must retain normal Vi behavior"
-        print("Interactive history test passed: entries, Up/Down, Esc cancellation, and Vi mode.")
+        os.write(master, b"\x12recall-marker")
+        assert b"reverse-i-search" in drain(), "Ctrl+R did not start native search"
+        os.write(master, b"\x05")  # Ctrl+E accepts for editing, without executing.
+        drain()
+        snapshot("echo recall-marker")
+        assert not (root / "fzf-called").exists(), "fzf binding survived"
+        os.write(master, b"\x15\x1b>\x10")  # End of history; Ctrl+P recalls latest.
+        drain()
+        snapshot("echo final")
+        os.write(master, b"\x15echo rerun-marker >> \"$HOME/ran\"\n")
+        drain()
+        os.write(master, b"!!\n")
+        drain()
+        assert (root / "ran").read_text() == "rerun-marker\nrerun-marker\n"
+        print("Interactive Bash history test passed: Ctrl+R, recall, and !! rerun.")
     finally:
         shell.kill()
         shell.wait(timeout=5)
