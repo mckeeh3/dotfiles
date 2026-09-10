@@ -80,6 +80,15 @@ class SSH2Tests(unittest.TestCase):
         self.assertNotIn("SSH_ARG:-l", output)
         self.assertFalse((self.root / "nmap.args").exists())
 
+    def test_configured_mode_through_symlinks(self):
+        source = self.root / "repo with spaces"
+        source.mkdir()
+        (self.root / "ssh2").rename(source / "ssh2")
+        self.config.rename(source / "ssh2.config")
+        (self.root / "relative-link").symlink_to("repo with spaces/ssh2")
+        (self.root / "ssh2").symlink_to(self.root / "relative-link")
+        self.test_configured_mode_does_not_scan()
+
     def test_scan_labels_navigation_and_username(self):
         before = self.config.read_bytes()
         code, output = self.interactive(["--scan"], [

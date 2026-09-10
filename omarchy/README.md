@@ -24,6 +24,9 @@ bash omarchy-setup.sh --replace-bashrc --replace-starship
 
 This replaces `.bashrc` with a small loader pointing at this repository and
 installs `omarchy/starship.toml` to `${XDG_CONFIG_HOME:-$HOME/.config}/starship.toml`.
+It also links `~/.local/bin/ssh2` to this repository's `ssh2` script, which reads
+`ssh2.config` beside the original script. An existing different command or link
+is left untouched; review and move it aside before rerunning the installer.
 Existing settings are **not merged**: move any additional personal settings you
 want to keep into the local override file described below. The installer captures
 the profile and prompt in this repo, not arbitrary changes made to your live
@@ -51,7 +54,8 @@ it. Use `starship-prompt current` to identify the active tracked preset.
 Open a **new Bash terminal** afterward. Do not source the new profile over your
 old initialized shell: old prompt hooks, aliases, and integrations may remain.
 Keep the repo in place. If you move it, rerun the installer from its new location
-with `--replace-bashrc` to update the loader.
+with `--replace-bashrc` to update the loader. Move the old `~/.local/bin/ssh2`
+link aside first so the installer can link the new location.
 
 Omarchy's normal `~/.bash_profile` sources `~/.bashrc`. The installer leaves login
 files alone; if you have customized yours, ensure it still does so. If an Omarchy

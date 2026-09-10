@@ -5,7 +5,7 @@ usage() {
   printf '%s\n' \
     'Usage: bash omarchy-setup.sh [--replace-bashrc] [--replace-starship]' \
     '' \
-    'Install the Omarchy Bash profile and Starship prompt for the current user.' \
+    'Install the Omarchy Bash profile, Starship prompt, and ssh2 link for the current user.' \
     'Existing differing files require their matching --replace-* flag and are backed up.' \
     'No packages are installed; no unrelated live configuration files are changed.'
 }
@@ -29,6 +29,19 @@ STARSHIP_SOURCE="$SCRIPT_DIR/omarchy/starship.toml"
 TARGET_FILE="${HOME:?HOME must be set}/.bashrc"
 CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 STARSHIP_TARGET="$CONFIG_HOME/starship.toml"
+SSH2_SOURCE="$SCRIPT_DIR/ssh2"
+SSH2_TARGET="$HOME/.local/bin/ssh2"
+
+if [[ ! -f $SSH2_SOURCE || ! -x $SSH2_SOURCE ]]; then
+  printf 'Missing executable: %s\n' "$SSH2_SOURCE" >&2
+  exit 1
+fi
+if [[ -e $SSH2_TARGET || -L $SSH2_TARGET ]]; then
+  if [[ ! -L $SSH2_TARGET || $(readlink -- "$SSH2_TARGET") != "$SSH2_SOURCE" ]]; then
+    printf 'Existing %s differs; review and move it aside before rerunning.\n' "$SSH2_TARGET" >&2
+    exit 1
+  fi
+fi
 
 if [[ ! -r ${OMARCHY_PATH:-/usr/share/omarchy}/default/bash/rc ]]; then
   printf 'Omarchy Bash defaults not found. Run this on an Omarchy installation.\n' >&2
@@ -114,6 +127,14 @@ else
   cp -- "$STARSHIP_SOURCE" "$TEMP_STARSHIP"
   mv -fT -- "$TEMP_STARSHIP" "$STARSHIP_TARGET"
   printf 'Installed: %s\n' "$STARSHIP_TARGET"
+fi
+
+mkdir -p -- "$HOME/.local/bin"
+if [[ -L $SSH2_TARGET ]]; then
+  printf 'Already installed: %s\n' "$SSH2_TARGET"
+else
+  ln -s -- "$SSH2_SOURCE" "$SSH2_TARGET"
+  printf 'Linked: %s -> %s\n' "$SSH2_TARGET" "$SSH2_SOURCE"
 fi
 
 printf '\nDependency check (no packages will be installed):\n'

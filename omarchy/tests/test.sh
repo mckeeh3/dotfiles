@@ -20,7 +20,7 @@ printf '# Mock defaults for installer checks only.\n' > "$OMARCHY_PATH/default/b
 # Include spaces and shell metacharacters to test generated source-line quoting.
 COPY_DIR="$TEST_DIR/repo with spaces \$quote'"
 mkdir -p "$COPY_DIR/omarchy"
-cp "$REPO_DIR/omarchy-setup.sh" "$COPY_DIR/"
+cp "$REPO_DIR/omarchy-setup.sh" "$REPO_DIR/ssh2" "$COPY_DIR/"
 cp "$REPO_DIR/omarchy/starship.toml" "$COPY_DIR/omarchy/"
 cp -r "$REPO_DIR/omarchy/bash" "$COPY_DIR/omarchy/"
 cp -r "$REPO_DIR/omarchy/starship-prompts" "$COPY_DIR/omarchy/"
@@ -28,6 +28,8 @@ INSTALLER="$COPY_DIR/omarchy-setup.sh"
 
 bash "$INSTALLER" >/dev/null
 bash -n "$HOME/.bashrc"
+[[ -L $HOME/.local/bin/ssh2 && $(readlink "$HOME/.local/bin/ssh2") == "$COPY_DIR/ssh2" ]] || fail 'missing ssh2 link'
+"$HOME/.local/bin/ssh2" --help >/dev/null
 cmp "$HOME/.config/starship.toml" "$REPO_DIR/omarchy/starship.toml"
 # Non-interactive loading must not enable aliases, history hooks, or ble.sh.
 bash --noprofile --norc -c 'source "$HOME/.bashrc"; ! declare -F _dotfiles_history_sync >/dev/null'
@@ -41,6 +43,23 @@ backups=("$HOME"/.bashrc.bak.*)
 (( ${#backups[@]} == 0 )) || fail 'rerun created backups'
 starship_backups=("$HOME/.config"/starship.toml.bak.*)
 (( ${#starship_backups[@]} == 0 )) || fail 'rerun created starship backups'
+
+# Never overwrite an existing command, dangling link, or directory.
+for kind in file link directory; do
+  rm "$HOME/.local/bin/ssh2"
+  case "$kind" in
+    file) printf 'personal command\n' > "$HOME/.local/bin/ssh2" ;;
+    link) ln -s "$TEST_DIR/missing-ssh2" "$HOME/.local/bin/ssh2" ;;
+    directory) mkdir "$HOME/.local/bin/ssh2" ;;
+  esac
+  if bash "$INSTALLER" >/dev/null 2>&1; then fail "replaced ssh2 $kind"; fi
+  case "$kind" in
+    file) [[ $(< "$HOME/.local/bin/ssh2") == 'personal command' ]] || fail 'modified command'; rm "$HOME/.local/bin/ssh2" ;;
+    link) [[ $(readlink "$HOME/.local/bin/ssh2") == "$TEST_DIR/missing-ssh2" ]] || fail 'modified link'; rm "$HOME/.local/bin/ssh2" ;;
+    directory) rmdir "$HOME/.local/bin/ssh2" ;;
+  esac
+  bash "$INSTALLER" >/dev/null
+done
 
 printf '# Existing Starship settings\n' > "$HOME/.config/starship.toml"
 cp "$HOME/.config/starship.toml" "$TEST_DIR/original-starship"
