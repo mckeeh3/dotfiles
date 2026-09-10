@@ -1,5 +1,8 @@
 # Omarchy Bash profile
 
+For the agent-readable desktop and shell replication guide, see
+[SETUP.md](SETUP.md).
+
 Reusable Bash customizations layered around Omarchy's packaged defaults, plus a
 tracked Starship prompt. Bash stays the system/login-shell fallback; use the
 [separate Zsh setup](zsh/README.md) for Ghostty. This profile does not install Zsh, change the login
