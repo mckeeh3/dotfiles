@@ -818,6 +818,32 @@ settings in its `shell.json` entry, but manual binding/gesture changes still nee
 explicit rollback. Preserve unrelated configuration and record installed
 version/commit, selected hot-corner behavior, optional integrations, and checks.
 
+## 13. Omarchy plugins: AI Usage Bar
+
+**Requested addition; installation and upstream requirements have not been audited.**
+
+- Upstream: <https://github.com/gladimdim/omarchy-ai-usage-bar>
+
+Follow section 8's trust, consent, backup, and local-change preservation rules.
+Review the current upstream documentation, manifest, compatibility, and any
+credential or usage-data access before installing. Check `omarchy plugin list
+--json` against the manifest's plugin ID; skip if already installed and enabled.
+If merely disabled, enable the existing reviewed installation using its actual
+plugin ID rather than reinstalling it.
+
+Back up `~/.config/omarchy/shell.json`. After consent, install only if absent:
+
+```bash
+omarchy plugin add https://github.com/gladimdim/omarchy-ai-usage-bar.git --enable
+```
+
+Preserve trust prompts, existing bar placement, and plugin settings. Configure
+any required authentication separately; never copy credentials or private usage
+data into this repository. Validate the discovered plugin directory with
+`omarchy plugin validate`, confirm it is enabled with `omarchy plugin list --json`,
+and manually verify the widget works. Record installed version/commit and any
+unverified requirements. Updates or removal require separate consent.
+
 ## Audit boundaries and exclusions
 
 Compared the live Hyprland, Ghostty, Alacritty, Foot, Kitty, Omarchy shell,
