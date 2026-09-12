@@ -69,6 +69,12 @@ fi
 bindkey -M viins '^[' vi-cmd-mode
 bindkey -M vicmd '^[' vi-cmd-mode
 
+# Optional per-user Java/Maven tools; install with omarchy/java/setup.sh.
+export SDKMAN_DIR=${SDKMAN_DIR:-$HOME/.sdkman}
+if [[ -s $SDKMAN_DIR/bin/sdkman-init.sh ]]; then
+  source "$SDKMAN_DIR/bin/sdkman-init.sh"
+fi
+
 # Keep machine-specific settings and secrets out of Git.
 [[ -r ${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles/zsh.local.zsh ]] &&
   source "${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles/zsh.local.zsh"

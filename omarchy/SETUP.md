@@ -844,6 +844,30 @@ data into this repository. Validate the discovered plugin directory with
 and manually verify the widget works. Record installed version/commit and any
 unverified requirements. Updates or removal require separate consent.
 
+## 14. Java and Maven via SDKMAN!
+
+**Installed and verified on the source machine:** SDKMAN 5.23.0, Temurin JDK
+25.0.4 LTS (`25.0.4-tem`), and Maven 3.9.16. These are observed versions, not pins.
+Fresh Bash/Zsh checks, Java compilation/execution, Maven offline validation, and
+an idempotent installer rerun passed. The conflicting mise Java selection was
+removed after backing up its config; the previous JDK and other mise tools were
+retained.
+
+Follow [Java/Maven setup](java/README.md) after applying the shell profiles in section 1.
+Review the script and obtain consent for downloads and missing dependencies.
+From the repository root, as the normal user:
+
+```bash
+bash omarchy/java/setup.sh
+```
+
+This installs SDKMAN only if absent, preserves existing Java/Maven defaults,
+and installs SDKMAN's recommended versions for missing tools. For reproducible
+project versions, use the guide's explicit version flags. Bash and Zsh load
+SDKMAN when present; reconcile conflicting mise Java/Maven settings without
+removing mise. Validate in fresh terminals with `sdk current`, `java -version`,
+`javac -version`, and `mvn -version`; record the versions and JAVA_HOME.
+
 ## Audit boundaries and exclusions
 
 Compared the live Hyprland, Ghostty, Alacritty, Foot, Kitty, Omarchy shell,

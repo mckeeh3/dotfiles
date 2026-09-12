@@ -1,7 +1,8 @@
 # Omarchy Bash profile
 
 For the agent-readable desktop and shell replication guide, see
-[SETUP.md](SETUP.md).
+[SETUP.md](SETUP.md). For optional Java and Maven installation through SDKMAN!,
+see [Java/Maven setup](java/README.md).
 
 Reusable Bash customizations layered around Omarchy's packaged defaults, plus a
 tracked Starship prompt. Bash stays the system/login-shell fallback; use the
@@ -87,7 +88,8 @@ The included Starship config starts from Starship's Tokyo Night preset.
 2. Omarchy's `default/bash/rc` loads the maintained upstream shell defaults.
 3. `bash/after.sh` adds history settings, aliases, helpers, and native Emacs-mode
    Readline editing with Ctrl+R reverse search.
-4. An optional local override is sourced.
+4. SDKMAN is initialized if installed (see the optional Java/Maven setup above).
+5. An optional local override is sourced.
 
 Repeatedly sourcing the loader in the same shell does not reinitialize it. Open
 a new terminal to apply changes to the tracked profile or local overrides.
