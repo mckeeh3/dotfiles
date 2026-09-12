@@ -2,7 +2,8 @@
 
 For the agent-readable desktop and shell replication guide, see
 [SETUP.md](SETUP.md). For optional Java and Maven installation through SDKMAN!,
-see [Java/Maven setup](java/README.md).
+see [Java/Maven setup](java/README.md). When setting up Pi, also install the
+[global Pi packages](SETUP.md#global-pi-packages): `pi-subagents` and `pi-web-access`.
 
 Reusable Bash customizations layered around Omarchy's packaged defaults, plus a
 tracked Starship prompt. Bash stays the system/login-shell fallback; use the

@@ -55,6 +55,7 @@ absolute paths. Do not run the legacy `arch-linux-setup.sh` on Omarchy.
 | Starship prompt | `omarchy/starship.toml` (Tokyo Night preset) | Exact live match at audit |
 | Desktop theme | `tokyo-night` | Observed selection, not a custom theme |
 | Default agent | `pi` | Optional; install/authenticate separately |
+| Pi packages | `pi-subagents`, `pi-web-access` | Required for Pi setup; install globally for the user (section 5) |
 
 ## 1. Shells, prompt, and Ghostty
 
@@ -213,6 +214,42 @@ agent installation, extensions, models, API credentials, and authentication were
 **not audited or exported**. If requested, install/configure the agent using its
 current documentation, then select it through Omarchy's default-agent menu.
 Do not copy credentials or assume selection means installation is complete.
+
+### Global Pi packages
+
+**Requested addition for Omarchy PCs, not an audited installation:** when setting
+up Pi, install `pi-subagents` and `pi-web-access` globally for the destination
+user, so they are available across projects.
+
+First confirm `pi` and `npm` are available and inspect `pi list` for existing
+**global** entries. A project-local entry does not satisfy this requirement.
+Review the packages' upstream source and requirements before installation:
+Pi packages execute with the user's full system access. Back up existing
+`~/.pi/agent/settings.json` outside the repository and preserve unrelated
+settings, package filters, and version pins.
+
+Run only the command for each missing global package, as the normal user:
+
+```bash
+pi install npm:pi-subagents
+pi install npm:pi-web-access
+```
+
+`pi install` defaults to global user settings (`~/.pi/agent/settings.json`);
+**do not use `-l` / `--local`, `sudo`, or `npm install -g`** for these Pi packages.
+If `PI_CODING_AGENT_DIR` is overridden, confirm the intended agent directory
+before installing. Existing global installs should be skipped, not upgraded or
+repinned as part of setup.
+
+Verify both appear in the global section of `pi list`, then start a fresh Pi
+session and confirm the packages load without errors. Follow each package's
+current documentation for any additional configuration or credentials; keep
+secrets out of this repository. Record installed versions and any unverified
+functionality in the destination setup report.
+
+To roll back packages newly added by this step, use
+`pi remove npm:pi-subagents` and/or `pi remove npm:pi-web-access` without `-l`.
+Do not remove packages that were already present before setup.
 
 ## 6. Zen browser and default-browser associations
 
