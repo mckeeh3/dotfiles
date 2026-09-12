@@ -9,7 +9,8 @@ unset ZDOTDIR
 mkdir -p "$HOME" "$XDG_CONFIG_HOME/ghostty"
 printf '# Keep Bash\n' > "$HOME/.bashrc"
 printf '# Keep prompt\n' > "$XDG_CONFIG_HOME/starship.toml"
-printf 'font-size = 12\n' > "$XDG_CONFIG_HOME/ghostty/config"
+printf 'background = #123456\nbackground-opacity = 0.8\n' > "$XDG_CONFIG_HOME/ghostty/theme.conf"
+printf 'font-size = 12\nconfig-file = theme.conf\n' > "$XDG_CONFIG_HOME/ghostty/config"
 
 # Exercise loader quoting with a repository path containing spaces.
 copy="$tmp/repo with spaces"
@@ -21,6 +22,9 @@ installer="$copy/omarchy-zsh-setup.sh"
 bash "$installer" --ghostty >/dev/null
 zsh -n "$HOME/.zshrc"
 ghostty +validate-config --config-file="$XDG_CONFIG_HOME/ghostty/config"
+ghostty +show-config --changes-only=false > "$tmp/effective-ghostty"
+grep -Fxq 'background = #000000' "$tmp/effective-ghostty"
+grep -Fxq 'background-opacity = 1' "$tmp/effective-ghostty"
 printf '# Keep Bash\n' | cmp - "$HOME/.bashrc"
 printf '# Keep prompt\n' | cmp - "$XDG_CONFIG_HOME/starship.toml"
 grep -Fxq 'font-size = 12' "$XDG_CONFIG_HOME/ghostty/config"
@@ -30,7 +34,7 @@ cmp "$XDG_CONFIG_HOME/ghostty/config" "$tmp/installed-ghostty"
 shopt -s nullglob
 backups=("$XDG_CONFIG_HOME/ghostty"/config.bak.*)
 (( ${#backups[@]} == 1 ))
-printf 'font-size = 12\n' | cmp - "${backups[0]}/config"
+printf 'font-size = 12\nconfig-file = theme.conf\n' | cmp - "${backups[0]}/config"
 
 printf '# Existing Zsh\n' > "$HOME/.zshrc"
 if bash "$installer" --ghostty >/dev/null 2>&1; then

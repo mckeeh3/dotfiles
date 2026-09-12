@@ -85,9 +85,13 @@ The installers are repeatable and save backups when replacing differing files.
 
 The live audited Ghostty config directly set `command = /usr/bin/zsh`.
 For new installations, prefer the Zsh installer's managed include of
-`omarchy/ghostty-zsh.conf`: it expresses the same preference without copying
-an entire terminal config. Reconcile any existing `command`, `initial-command`,
-or old dotfiles include before adding it.
+`omarchy/ghostty-zsh.conf`: it selects Zsh and sets a solid black background
+(`background = #000000`, `background-opacity = 1`) without copying an entire
+terminal config. Keep the managed include after the Omarchy theme include;
+other theme colors remain unchanged. Existing installations using this include
+pick up changes on a Ghostty configuration reload (`omarchy restart terminal`).
+Reconcile any existing `command`, `initial-command`, or old dotfiles include
+before adding it.
 
 Set Ghostty as the preferred desktop terminal through the target version's
 Omarchy default-application menu, or back up and edit

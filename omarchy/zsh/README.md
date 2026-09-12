@@ -30,7 +30,9 @@ The installer:
 - Creates `~/.zshrc` as a loader pointing at this repository.
 - With `--ghostty`, appends an include of `omarchy/ghostty-zsh.conf` to
   `${XDG_CONFIG_HOME:-$HOME/.config}/ghostty/config`. This sets
-  `command = /usr/bin/zsh` without replacing your font, theme, or keybindings.
+  `command = /usr/bin/zsh`, `background = #000000`, and `background-opacity = 1`
+  without replacing your font, other theme colors, or keybindings. Keep this
+  include after the Omarchy theme include so the background stays solid black.
 - Backs up changed existing files in private `*.bak.XXXXXXXX` directories next
   to the files. Identical reruns do not add backups or duplicate includes.
 - Leaves `.bashrc`, the login shell, the selected Starship config, existing
