@@ -1,0 +1,3 @@
+# AUR-only packages for every Omarchy PC. One exact package name per line.
+# Review upstream sources and PKGBUILDs before adding or installing entries.
+# No AUR-only packages selected yet.

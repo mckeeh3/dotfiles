@@ -58,6 +58,27 @@ absolute paths. Do not run the legacy `arch-linux-setup.sh` on Omarchy.
 | Default agent | `pi` | Optional; install/authenticate separately |
 | Pi packages | `pi-subagents`, `pi-web-access` | Required for Pi setup; install globally for the user (section 5) |
 
+## Shared apps on every Omarchy PC
+
+The desired cross-PC app lists live in [`packages/repo.txt`](packages/repo.txt)
+and [`packages/aur.txt`](packages/aur.txt). Read [package setup](packages/README.md)
+before applying. These are requested additions, not an installed-package audit.
+LocalSend (`localsend`, from Omarchy's repository) is the first shared app;
+the AUR list is ready for future additions but currently empty.
+
+After pulling this repository on each PC, preview and obtain consent, then apply
+in a visible terminal as the normal user:
+
+```bash
+bash omarchy/packages/setup.sh
+bash omarchy/packages/setup.sh --apply
+```
+
+Already installed names are skipped. This only installs missing entries; it does
+not upgrade or remove apps, alter defaults, configure networking, or replace the
+shell dependency steps below. Review AUR sources before installation. Report
+applied, skipped, and failed packages; do not silently substitute package variants.
+
 ## 1. Shells, prompt, and Ghostty
 
 Read both linked shell guides completely for behaviors, consent flags, backups,

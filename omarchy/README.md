@@ -12,6 +12,13 @@ shell, or modify anything under `/usr/share/omarchy/`. Do **not** run
 `arch-linux-setup.sh` for this profile: that installer deploys the older Zsh and
 application configs.
 
+## Shared apps on every Omarchy PC
+
+See [shared package setup](packages/README.md) for repository and AUR app lists,
+starting with LocalSend. Preview with `bash omarchy/packages/setup.sh`, then
+install missing apps with `bash omarchy/packages/setup.sh --apply` after review.
+This is a separate step; the shell installers below remain configuration-only.
+
 ## Install on a new Omarchy machine
 
 Clone this repository to a permanent location, then run from its root:
