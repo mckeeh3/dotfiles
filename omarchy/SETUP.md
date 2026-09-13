@@ -50,6 +50,7 @@ absolute paths. Do not run the legacy `arch-linux-setup.sh` on Omarchy.
 | Browser | Zen (`zen-browser-bin`), default `zen.desktop` | Install through Omarchy |
 | Ghostty shell | `/usr/bin/zsh` | Requires Zsh |
 | Zellij | Installed; `default_shell "/usr/bin/zsh"` | Requires Zsh |
+| Login apps | Zen on workspace 1; Ghostty + Zellij session `dotfiles` on workspace 4 | Portable preference; see section 7a |
 | Account/login shell | `/usr/bin/bash` | Retain; no `chsh` |
 | Shell profiles | Repository Bash fallback and Zsh profile | Use existing installers |
 | Starship prompt | `omarchy/starship.toml` (Tokyo Night preset) | Exact live match at audit |
@@ -368,6 +369,52 @@ by `default_shell`. Do not kill existing sessions to apply this preference.
 This does not enable automatic Zellij startup in Ghostty or Zsh, change the
 account shell, or export session data. Restore the config backup to roll back.
 Other Zellij configuration preferences have not been audited for this guide.
+
+## 7a. Login apps: Zen and Ghostty/Zellij
+
+Enable this preference on other Omarchy PCs after installing Zen, Ghostty, and
+Zellij (sections 1, 6, and 7). This is Hyprland-login autostart, not system boot
+before login and not automatic Zellij startup in every terminal.
+
+Check `command -v zen-browser ghostty zellij` and the target Hyprland version.
+Read the current [dispatcher rules](https://wiki.hypr.land/Configuring/Basics/Dispatchers/#executing-with-rules)
+and installed Lua API before applying; older `.conf` installations need adaptation.
+Back up `~/.config/hypr/autostart.lua`, inspect symlinks, and confirm the main
+config loads it. Merge the following block once, preserving unrelated startup
+commands. If the block already matches, skip it; otherwise update it in place.
+Reconcile other Zen/Zellij autostart entries to avoid duplicate launches.
+
+```lua
+-- BEGIN dotfiles login apps
+hl.on("hyprland.start", function()
+  -- Direct launches let Hyprland track PIDs for these startup-only rules.
+  hl.exec_cmd("zen-browser", { workspace = "1 silent" })
+  hl.exec_cmd("ghostty --gtk-single-instance=false -e zellij attach --create dotfiles", { workspace = "4 silent" })
+end)
+-- END dotfiles login apps
+```
+
+These rules apply only to the launched processes, not all future Zen or Ghostty
+windows. `silent` avoids switching the active workspace. Ghostty uses a separate
+process so an existing instance does not bypass PID-based placement. Do not wrap
+these launches with `uwsm-app`: systemd indirection can break PID tracking.
+Zen placement assumes a fresh browser process at login; forwarding to an already
+running browser may not honor the startup rule.
+
+Zellij attaches to or creates the local session named `dotfiles`. Session
+resurrection depends on local Zellij state/settings; this does not copy session
+data between PCs or preserve processes through reboot. Do not add
+`--force-run-commands`: resurrected commands should retain Zellij's confirmation.
+The session name does not set a working directory or assume a repository path.
+
+Validate with `luac -p ~/.config/hypr/autostart.lua`, `hyprctl reload`, and
+`hyprctl configerrors`. Reload must not launch the apps. On the next normal
+login, verify Zen opens on workspace 1 and Ghostty on workspace 4, with Zellij
+showing session `dotfiles`. Do not log out or reboot just to validate without
+permission. Report the login smoke test separately from parse validation.
+To disable, remove only this marked block and reload; running apps remain open.
+The shell-only `omarchy-setup.sh` does not deploy desktop settings; apply this
+section when following this full setup runbook.
 
 ## 8. Omarchy plugins: Omaplug (Plugin Manager)
 
