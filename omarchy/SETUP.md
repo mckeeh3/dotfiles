@@ -54,7 +54,7 @@ absolute paths. Do not run the legacy `arch-linux-setup.sh` on Omarchy.
 | Account/login shell | `/usr/bin/bash` | Retain; no `chsh` |
 | Shell profiles | Repository Bash fallback and Zsh profile | Use existing installers |
 | Starship prompt | `omarchy/starship.toml` (Tokyo Night preset) | Exact live match at audit |
-| Desktop theme | `tokyo-night` | Observed selection, not a custom theme |
+| Desktop theme | `stellar` | Install from `cicorias/omarchy-stellar-theme`, then activate (section 5) |
 | Default agent | `pi` | Optional; install/authenticate separately |
 | Pi packages | `pi-subagents`, `pi-web-access` | Required for Pi setup; install globally for the user (section 5) |
 
@@ -201,18 +201,35 @@ Environment scaling changes may require restarting applications or a new session
 
 ## 5. Theme and optional agent
 
-The active desktop theme was `tokyo-night`; the Starship config exactly matched
-both `omarchy/starship.toml` and `omarchy/starship-prompts/tokyo-night.toml`.
-The prompt installer above already reproduces the prompt independently of the
-desktop theme. If the user also wants the observed desktop theme, check
-`omarchy theme set --help`, then use:
+The current desktop theme is **Stellar** (`stellar`), installed from
+<https://github.com/cicorias/omarchy-stellar-theme>. Install and activate this
+theme as part of setup. This supersedes the original `tokyo-night` desktop
+selection; the repository's Starship prompt remains independent and unchanged.
+
+Check `omarchy theme install --help`, `omarchy theme set --help`, and
+`omarchy theme current` on the target machine first. Then run:
 
 ```bash
-omarchy theme set tokyo-night
+(
+  set -e
+  if [[ ! -e "$HOME/.config/omarchy/themes/stellar" && ! -L "$HOME/.config/omarchy/themes/stellar" ]]; then
+    omarchy theme install https://github.com/cicorias/omarchy-stellar-theme
+  fi
+  if [[ "$(omarchy theme current)" != "Stellar" ]]; then
+    omarchy theme set stellar
+  fi
+)
 ```
 
-Do not copy generated files from `~/.local/state/omarchy/current/`. No custom
-theme implementation was found in the audited user themes directory.
+The installer also activates the theme, so the second check avoids applying it
+twice. Do not reinstall over an existing `stellar` directory: inspect its origin
+and local changes first, and back it up before any approved replacement (the
+installer removes existing theme files). If already installed and active, skip
+both mutations. Verify that `omarchy theme current` reports `Stellar`.
+
+Do not copy generated files from `~/.local/state/omarchy/current/`. Install from
+the theme repository instead; this follows its default branch rather than a
+pinned revision.
 
 `~/.config/omarchy/defaults/agent` contained `pi`. This records a preference only:
 agent installation, extensions, models, API credentials, and authentication were
