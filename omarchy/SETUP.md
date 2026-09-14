@@ -53,7 +53,7 @@ absolute paths. Do not run the legacy `arch-linux-setup.sh` on Omarchy.
 | Login apps | Zen on workspace 1; Ghostty + Zellij session `dotfiles` on workspace 4 | Portable preference; see section 7a |
 | Account/login shell | `/usr/bin/bash` | Retain; no `chsh` |
 | Shell profiles | Repository Bash fallback and Zsh profile | Use existing installers |
-| Starship prompt | `omarchy/starship.toml` (Tokyo Night preset) | Exact live match at audit |
+| Starship prompt | `omarchy/starship.toml` (Arch Powerline preset) | Default for new installs; existing configs require `--replace-starship` |
 | Desktop theme | `stellar` | Install from `cicorias/omarchy-stellar-theme`, then activate (section 5) |
 | Default agent | `pi` | Optional; install/authenticate separately |
 | Pi packages | `pi-subagents`, `pi-web-access` | Required for Pi setup; install globally for the user (section 5) |

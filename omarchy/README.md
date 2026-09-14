@@ -35,7 +35,8 @@ bash omarchy-setup.sh --replace-bashrc --replace-starship
 ```
 
 This replaces `.bashrc` with a small loader pointing at this repository and
-installs `omarchy/starship.toml` to `${XDG_CONFIG_HOME:-$HOME/.config}/starship.toml`.
+installs `omarchy/starship.toml` (the Arch Powerline prompt) to
+`${XDG_CONFIG_HOME:-$HOME/.config}/starship.toml`.
 It also links `~/.local/bin/ssh2` to this repository's `ssh2` script, which reads
 `ssh2.config` beside the original script. An existing different command or link
 is left untouched; review and move it aside before rerunning the installer.
@@ -50,6 +51,17 @@ a fresh shell, run `starship-prompt list` to see them, then select one with:
 ```bash
 starship-prompt easy-term
 ```
+
+For the two-line Arch screenshot-style prompt, select `starship-prompt arch-powerline`.
+It shows the OS, full directory path, Git branch and change counts on the left;
+a green success check or red numeric exit code and a seconds clock on the right.
+Only SSH sessions show `with user@hostname` and a globe; both identity fields
+are hidden locally, including in root/su sessions.
+Install/select the preset on the remote server too to get this prompt over SSH.
+A Nerd Font is required for the icons and Powerline separators. The right-hand
+details use Starship's `$fill` on the first line (rather than a native
+`right_prompt`) so Bash and Zsh both leave the second line for command input.
+Long paths may crowd the right side in narrow terminals.
 
 This copies the selected preset to `${XDG_CONFIG_HOME:-$HOME/.config}/starship.toml`.
 Open a fresh terminal, or run `exec bash`, to ensure every prompt hook is using
@@ -87,7 +99,8 @@ omarchy pkg add bash-completion git fzf zoxide starship eza bat ripgrep
 Omarchy handles initialization of Bash completion, fzf, zoxide, Starship, and
 mise. This profile restores native Readline Ctrl+R after Omarchy's fzf setup;
 other fzf integrations remain available. ble.sh is no longer loaded or required.
-The included Starship config starts from Starship's Tokyo Night preset.
+The default Starship config is the Arch Powerline preset described above.
+Tokyo Night remains available with `starship-prompt tokyo-night`.
 
 ## Load order and features
 

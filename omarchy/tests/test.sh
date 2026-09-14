@@ -31,6 +31,7 @@ bash -n "$HOME/.bashrc"
 [[ -L $HOME/.local/bin/ssh2 && $(readlink "$HOME/.local/bin/ssh2") == "$COPY_DIR/ssh2" ]] || fail 'missing ssh2 link'
 "$HOME/.local/bin/ssh2" --help >/dev/null
 cmp "$HOME/.config/starship.toml" "$REPO_DIR/omarchy/starship.toml"
+cmp "$HOME/.config/starship.toml" "$REPO_DIR/omarchy/starship-prompts/arch-powerline.toml"
 # Non-interactive loading must not enable aliases, history hooks, or ble.sh.
 bash --noprofile --norc -c 'source "$HOME/.bashrc"; ! declare -F _dotfiles_history_sync >/dev/null'
 cp "$HOME/.bashrc" "$TEST_DIR/installed"
