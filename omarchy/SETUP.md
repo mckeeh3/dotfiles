@@ -1012,6 +1012,44 @@ SDKMAN when present; reconcile conflicting mise Java/Maven settings without
 removing mise. Validate in fresh terminals with `sdk current`, `java -version`,
 `javac -version`, and `mvn -version`; record the versions and JAVA_HOME.
 
+## 15. Omarchy plugins: OmCursor Forge
+
+**Requested addition; not installed or runtime-verified as part of this guide.**
+
+- Upstream: <https://github.com/ErikBurdett/omcursor-forge>
+- Plugin ID: `io.github.erikburdett.cursorforge`
+- Requested bar placement: **right** (also the upstream manifest default).
+
+Follow section 8's trust, consent, backup, and local-change preservation rules.
+Review the current upstream source and compatibility, back up
+`~/.config/omarchy/shell.json`, and check `omarchy plugin list --json` first.
+Install only if absent; preserve trust prompts:
+
+```bash
+omarchy plugin add https://github.com/ErikBurdett/omcursor-forge.git --enable
+```
+
+Then enable and explicitly place the widget on the right. For an existing reviewed
+installation, skip the add command and use this placement command directly:
+
+```bash
+omarchy plugin enable io.github.erikburdett.cursorforge right
+```
+
+Preserve other widgets and plugin settings. Validate the discovered plugin
+folder with `omarchy plugin validate`, confirm it is enabled with
+`omarchy plugin list --json`, and visually check that its widget appears on the
+right and opens its panel.
+
+Upstream requires Python 3; cursor application uses `hyprctl` and `gsettings`.
+ImageMagick is optional for custom images. Applying a style changes the live
+Hyprland/GTK cursor and stores settings in `~/.config/cursorforge/settings.json`.
+Do not apply a style, install the optional click-ripple binding, or apply the
+fractional-scaling fix without separate consent. Before approved removal, use
+**Restore system cursor** and undo any optional binding/scaling changes. Updates
+and removal require separate consent; record the installed version/commit and
+checks actually performed.
+
 ## Audit boundaries and exclusions
 
 Compared the live Hyprland, Ghostty, Alacritty, Foot, Kitty, Omarchy shell,
