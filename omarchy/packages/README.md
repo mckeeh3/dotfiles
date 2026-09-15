@@ -4,7 +4,7 @@ These lists define extra apps wanted on every Omarchy PC, not a full export of
 one machine's packages. Shared apps include LocalSend and KeePass (`keepass`, from Arch's extra repository).
 
 - `repo.txt`: packages in enabled pacman repositories (including Omarchy).
-- `aur.txt`: AUR-only packages; currently empty.
+- `aur.txt`: AUR-only packages, including MEGAsync (`megasync-bin`).
 
 From the repository root on each PC, after pulling the latest changes:
 
