@@ -1,6 +1,10 @@
 .metals
 .vscode
 
+# Generated Python test caches.
+__pycache__/
+*.py[cod]
+
 # Local-only overrides and accidental backup files (never deployment inputs).
 *.local.sh
 *.local.zsh
