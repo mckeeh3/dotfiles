@@ -15,7 +15,7 @@ application configs.
 ## Shared apps on every Omarchy PC
 
 See [shared package setup](packages/README.md) for repository and AUR app lists,
-starting with LocalSend. Preview with `bash omarchy/packages/setup.sh`, then
+including LocalSend and KeePass. Preview with `bash omarchy/packages/setup.sh`, then
 install missing apps with `bash omarchy/packages/setup.sh --apply` after review.
 This is a separate step; the shell installers below remain configuration-only.
 

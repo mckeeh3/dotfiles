@@ -1,3 +1,4 @@
 # Packages from enabled pacman repositories, including Omarchy's repository.
 # One package per line; inline comments are supported.
 localsend # Cross-platform local network file sharing
+keepass # Password manager

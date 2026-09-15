@@ -28,12 +28,12 @@ chmod +x "$tmp/bin/"*
 export PATH="$tmp/bin:$PATH"
 script="$tmp/packages/setup.sh"
 bash "$script" > "$tmp/output"
-grep -q 'Missing (repo): localsend' "$tmp/output"
+grep -Fxq 'Missing (repo): localsend keepass' "$tmp/output"
 [[ ! -s "$CALLS" ]]
 printf 'test-aur # Example\n' >> "$tmp/packages/aur.txt"
 if (( EUID != 0 )); then
   bash "$script" --apply > "$tmp/output"
-  grep -Fxq 'pkg add localsend' "$CALLS"
+  grep -Fxq 'pkg add localsend keepass' "$CALLS"
   grep -Fxq 'pkg aur add test-aur' "$CALLS"
   cp "$CALLS" "$tmp/first-calls"
   bash "$script" --apply > "$tmp/output"

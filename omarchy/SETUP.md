@@ -63,8 +63,9 @@ absolute paths. Do not run the legacy `arch-linux-setup.sh` on Omarchy.
 The desired cross-PC app lists live in [`packages/repo.txt`](packages/repo.txt)
 and [`packages/aur.txt`](packages/aur.txt). Read [package setup](packages/README.md)
 before applying. These are requested additions, not an installed-package audit.
-LocalSend (`localsend`, from Omarchy's repository) is the first shared app;
-the AUR list is ready for future additions but currently empty.
+Shared apps include LocalSend (`localsend`, from Omarchy's repository) and
+KeePass (`keepass`, from Arch's extra repository). The AUR list is ready for
+future additions but currently empty.
 
 After pulling this repository on each PC, preview and obtain consent, then apply
 in a visible terminal as the normal user:

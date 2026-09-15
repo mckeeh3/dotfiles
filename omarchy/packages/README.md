@@ -1,7 +1,7 @@
 # Shared Omarchy apps
 
 These lists define extra apps wanted on every Omarchy PC, not a full export of
-one machine's packages. LocalSend is the first shared app.
+one machine's packages. Shared apps include LocalSend and KeePass (`keepass`, from Arch's extra repository).
 
 - `repo.txt`: packages in enabled pacman repositories (including Omarchy).
 - `aur.txt`: AUR-only packages; currently empty.
