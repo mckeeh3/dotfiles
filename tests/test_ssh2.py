@@ -170,6 +170,19 @@ class SSH2Tests(unittest.TestCase):
                     name=r"Ignored\032service\059name"):
         return f"=;eth0;IPv4;{name};_ssh._tcp;local;{host};{address};{port};\"user=evil\"\n"
 
+    def test_avahi_supported_arguments(self):
+        self.command("avahi-browse", '''for arg; do
+  case "$arg" in
+    --resolve|--terminate|--parsable|--no-db-lookup|_ssh._tcp) ;;
+    *) echo "unsupported avahi-browse argument: $arg" >&2; exit 1 ;;
+  esac
+done
+printf "%s" "$MOCK_MDNS"
+''')
+        self.env["MOCK_MDNS"] = self.mdns_record()
+        code, output = self.interactive([], [("192.168.7.20", b"q")])
+        self.assertEqual(code, 0, output)
+
     def test_mdns_merge_manual_priority_and_port(self):
         before = self.config.read_bytes()
         self.env["MOCK_MDNS"] = (

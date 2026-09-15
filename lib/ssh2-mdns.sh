@@ -95,7 +95,7 @@ ssh2_mdns() (
     done <<< "$records"
   elif command -v avahi-browse >/dev/null 2>&1; then
     status=0
-    output=$(ssh2_bounded 5 avahi-browse --resolve --terminate --parsable --no-db-lookup -4 _ssh._tcp) || status=$?
+    output=$(ssh2_bounded 5 avahi-browse --resolve --terminate --parsable --no-db-lookup _ssh._tcp) || status=$?
     if (( status == 124 )); then
       echo 'mDNS discovery timed out; using available configured/discovered targets.' >&2
     elif (( status != 0 )); then
