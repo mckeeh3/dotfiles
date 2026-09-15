@@ -145,6 +145,23 @@ Do not change the account's Bash login shell.
   `ssh2.config` is machine-specific: review/configure destinations separately;
   do not treat the source machine's host inventory as a portable requirement.
 
+### Optional home-LAN SSH discovery
+
+After explicit consent to enable incoming SSH access, add `--setup-mdns` to
+`omarchy-setup.sh` or `omarchy-zsh-setup.sh`, or run only the shared helper:
+
+```bash
+bash omarchy/mdns/setup.sh --apply
+```
+
+This installs missing Avahi/OpenSSH packages, enables services if needed, and
+advertises the effective SSH port. Existing Avahi installations are reused;
+SSH authentication and firewall settings are preserved. The Zsh option also
+links `~/.local/bin/ssh2` safely. See [mDNS setup](mdns/README.md) for preflight
+limitations, existing advertisements, network requirements, and verification.
+`ssh2` merges automatic IPv4 discoveries with manual `ssh2.config` entries for
+PCs without mDNS; `ssh2 --no-mdns` disables discovery.
+
 ## 2. Window gaps and animations
 
 Merge these overrides into `~/.config/hypr/looknfeel.lua`, updating existing

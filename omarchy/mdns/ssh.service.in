@@ -1,0 +1,10 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE service-group SYSTEM "avahi-service.dtd">
+<!-- Managed by dotfiles/omarchy/mdns/setup.sh. -->
+<service-group>
+  <name replace-wildcards="yes">%h SSH</name>
+  <service protocol="ipv4">
+    <type>_ssh._tcp</type>
+    <port>@PORT@</port>
+  </service>
+</service-group>

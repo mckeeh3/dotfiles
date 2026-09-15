@@ -45,6 +45,15 @@ want to keep into the local override file described below. The installer capture
 the profile and prompt in this repo, not arbitrary changes made to your live
 files later.
 
+For automatic SSH discovery when adding this PC to your home LAN, optionally
+add `--setup-mdns` to the installer (also supported by `omarchy-zsh-setup.sh`).
+This installs only missing Avahi/OpenSSH packages, enables **incoming SSH access**,
+and advertises the configured port without changing authentication or firewall
+settings. Avahi already installed/running is reused. The standalone
+`bash omarchy/mdns/setup.sh --apply` performs only this setup. See
+[mDNS setup and limitations](mdns/README.md) before enabling it. `ssh2` merges
+discoveries with `ssh2.config`; `ssh2 --no-mdns` keeps config-only behavior.
+
 Additional prompt presets live in `omarchy/starship-prompts/`. After opening
 a fresh shell, run `starship-prompt list` to see them, then select one with:
 
@@ -73,7 +82,7 @@ it. Use `starship-prompt current` to identify the active tracked preset.
 - Symlinks are backed up as symlinks; their targets are not modified.
 - An identical installation is a no-op, including with replacement flags.
 - Modified loaders or prompt configs require explicit replacement permission.
-- No packages are installed, and no unrelated live configuration files are changed.
+- Without `--setup-mdns`, no packages are installed and no system services are changed.
 
 Open a **new Bash terminal** afterward. Do not source the new profile over your
 old initialized shell: old prompt hooks, aliases, and integrations may remain.
@@ -88,7 +97,7 @@ rerun the installer.
 
 ## Dependencies
 
-The installer reports missing commands/files without changing packages. Most
+The profile dependency check reports missing commands/files without changing packages. Most
 are already provided by Omarchy. If needed, use the following commands yourself:
 
 ```bash

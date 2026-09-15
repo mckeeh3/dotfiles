@@ -12,19 +12,25 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "$SCRIPT_PATH")" && pwd)
 CONFIG_FILE="$SCRIPT_DIR/ssh2.config"
 
 usage() {
-  printf 'Usage: ssh2 [--scan [IPv4-subnet/CIDR]]\n\n'
-  printf 'Without arguments, select a target from ssh2.config.\n'
+  printf 'Usage: ssh2 [--no-mdns | --scan [IPv4-subnet/CIDR]]\n\n'
+  printf 'Without arguments, merge ssh2.config with mDNS SSH discoveries (5-second wait budget, capped results).\n'
+  printf 'With --no-mdns, use only ssh2.config. Discoveries are never saved.\n'
   printf 'With --scan, discover open SSH ports (TCP 22); default: 192.168.7.0/24.\n'
   printf 'Scan results are temporary. Only scan networks you have permission to scan.\n'
 }
 
 scan=false
+mdns=true
 subnet=192.168.7.0/24
 case "${1:-}" in
   --scan)
     [[ $# -le 2 ]] || { usage >&2; exit 1; }
     scan=true
     subnet=${2:-$subnet}
+    ;;
+  --no-mdns)
+    [[ $# -eq 1 ]] || { usage >&2; exit 1; }
+    mdns=false
     ;;
   -h|--help)
     usage
@@ -50,13 +56,16 @@ if $scan; then
     echo 'Scanning requires nmap. Install with: sudo pacman -S nmap (Arch) or brew install nmap (macOS).' >&2
     exit 1
   fi
-elif [[ ! -f "$CONFIG_FILE" ]]; then
+elif ! $mdns && [[ ! -f "$CONFIG_FILE" ]]; then
   echo "Missing config file: $CONFIG_FILE" >&2
   exit 1
 fi
 
 labels=()
 ips=()
+ports=()
+prompt_user=()
+mdns_hosts=()
 
 if [[ -f "$CONFIG_FILE" ]]; then
   while IFS= read -r raw_line || [[ -n "$raw_line" ]]; do
@@ -75,6 +84,9 @@ if [[ -f "$CONFIG_FILE" ]]; then
 
     labels+=("$label")
     ips+=("$ip")
+    ports+=(22)
+    prompt_user+=(false)
+    mdns_hosts+=("")
   done < "$CONFIG_FILE"
 fi
 
@@ -114,6 +126,37 @@ if $scan; then
   fi
   labels=("${discovered_labels[@]}")
   ips=("${discovered_ips[@]}")
+  for (( i=0; i<${#ips[@]}; i++ )); do
+    ports[$i]=22
+    prompt_user[$i]=true
+  done
+elif $mdns; then
+  if [[ -r $SCRIPT_DIR/lib/ssh2-mdns.sh ]]; then
+    source "$SCRIPT_DIR/lib/ssh2-mdns.sh"
+    # Normalize each manual target once, not in the discovery comparison loop.
+    for (( i=0; i<${#ips[@]}; i++ )); do
+      mdns_hosts[$i]=$(printf '%s' "${ips[$i]%.}" | LC_ALL=C tr '[:upper:]' '[:lower:]')
+    done
+    while IFS=$'\t' read -r host address port; do
+      [[ -n $host ]] || continue
+      duplicate=false
+      for (( i=0; i<${#ips[@]}; i++ )); do
+        if [[ ${ports[$i]} == "$port" ]] &&
+           [[ ${ips[$i]} == "$address" || ${mdns_hosts[$i]} == "$host" ]]; then
+          duplicate=true
+          break
+        fi
+      done
+      $duplicate && continue
+      labels+=("${host%.local}")
+      ips+=("$address")
+      ports+=("$port")
+      prompt_user+=(true)
+      mdns_hosts+=("$host")
+    done < <(ssh2_mdns)
+  else
+    echo 'mDNS helper missing; using configured targets. Keep ssh2 with its lib directory.' >&2
+  fi
 fi
 
 if [[ ${#ips[@]} -eq 0 ]]; then
@@ -138,10 +181,12 @@ draw_menu() {
   printf 'Select an SSH target and press Enter (q to cancel):\n\n'
 
   for i in "${!ips[@]}"; do
+    endpoint=${ips[$i]}
+    [[ ${ports[$i]} == 22 ]] || endpoint="$endpoint:${ports[$i]}"
     if [[ $i -eq $selected_index ]]; then
-      printf '> %s (%s)\n' "${labels[$i]}" "${ips[$i]}"
+      printf '> %s (%s)\n' "${labels[$i]}" "$endpoint"
     else
-      printf '  %s (%s)\n' "${labels[$i]}" "${ips[$i]}"
+      printf '  %s (%s)\n' "${labels[$i]}" "$endpoint"
     fi
   done
 }
@@ -193,7 +238,7 @@ cleanup
 trap - EXIT INT TERM
 
 ssh_options=()
-if $scan; then
+if ${prompt_user[$selected]}; then
   default_user=$(id -un)
   while true; do
     read -r -p "SSH username [$default_user]: " username
@@ -204,6 +249,8 @@ if $scan; then
     echo 'Enter a username without whitespace or a leading dash.' >&2
   done
   ssh_options=(-l "$username")
+  # Advertised endpoints must not inherit a different port from SSH config.
+  $scan || ssh_options+=(-p "${ports[$selected]}")
 fi
 
 printf 'Connecting to %s (%s)\n' "${labels[$selected]}" "${ips[$selected]}"

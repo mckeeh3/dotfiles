@@ -37,8 +37,13 @@ The installer:
   to the files. Identical reruns do not add backups or duplicate includes.
 - Leaves `.bashrc`, the login shell, the selected Starship config, existing
   history, and the desktop's default terminal application unchanged.
-- Installs no packages and refuses custom `ZDOTDIR` or symlinked Ghostty config
-  setups; those need manual configuration.
+- Installs no packages by default and refuses custom `ZDOTDIR` or symlinked
+  Ghostty config setups; those need manual configuration.
+- With `--setup-mdns`, links `~/.local/bin/ssh2` without overwriting an existing
+  different command/link, installs missing Avahi/OpenSSH packages, and enables
+  **incoming SSH access** and LAN advertising. Existing authentication/firewall
+  settings are untouched. See [mDNS setup](../mdns/README.md). Manual
+  `ssh2.config` entries remain supported for PCs without mDNS.
 
 Keep this repository in place. If you move it, update the loader and Ghostty
 include (remove the old include before rerunning). An existing `initial-command`

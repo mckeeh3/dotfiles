@@ -3,17 +3,20 @@ set -euo pipefail
 
 usage() {
   printf '%s\n' \
-    'Usage: bash omarchy-setup.sh [--replace-bashrc] [--replace-starship]' \
+    'Usage: bash omarchy-setup.sh [--replace-bashrc] [--replace-starship] [--setup-mdns]' \
     '' \
     'Install the Omarchy Bash profile, Starship prompt, and ssh2 link for the current user.' \
     'Existing differing files require their matching --replace-* flag and are backed up.' \
-    'No packages are installed; no unrelated live configuration files are changed.'
+    'By default no packages are installed; no unrelated live configuration files are changed.' \
+    '--setup-mdns installs missing Avahi/OpenSSH packages and enables incoming SSH access and LAN advertising.'
 }
 
+setup_mdns=0
 replace_bashrc=0
 replace_starship=0
 while (( $# )); do
   case "$1" in
+    --setup-mdns) setup_mdns=1 ;;
     --replace-bashrc) replace_bashrc=1 ;;
     --replace-starship) replace_starship=1 ;;
     -h|--help) usage; exit 0 ;;
@@ -137,7 +140,11 @@ else
   printf 'Linked: %s -> %s\n' "$SSH2_TARGET" "$SSH2_SOURCE"
 fi
 
-printf '\nDependency check (no packages will be installed):\n'
+if (( setup_mdns )); then
+  bash "$SCRIPT_DIR/omarchy/mdns/setup.sh" --apply
+fi
+
+printf '\nProfile dependency check (report only):\n'
 for tool in git fzf zoxide starship eza bat rg; do
   if ! command -v "$tool" >/dev/null 2>&1; then
     printf '  Missing command: %s (see omarchy/README.md)\n' "$tool"

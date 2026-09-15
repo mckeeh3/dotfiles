@@ -3,16 +3,19 @@ set -euo pipefail
 
 usage() {
   printf '%s\n' \
-    'Usage: bash omarchy-zsh-setup.sh [--replace-zshrc] [--ghostty]' \
+    'Usage: bash omarchy-zsh-setup.sh [--replace-zshrc] [--ghostty] [--setup-mdns]' \
     'Install the separate Omarchy Zsh profile; optionally enable it in Ghostty.' \
     'Existing differing .zshrc files require --replace-zshrc and are backed up.' \
     'Bash, the login shell, Starship config, and history files are never changed.' \
-    'No packages are installed. Custom ZDOTDIR setups must be configured manually.'
+    'By default no packages are installed. Custom ZDOTDIR setups must be configured manually.' \
+    '--setup-mdns installs missing Avahi/OpenSSH packages and enables incoming SSH access and LAN advertising.'
 }
+setup_mdns=0
 replace=0
 ghostty=0
 while (( $# )); do
   case $1 in
+    --setup-mdns) setup_mdns=1 ;;
     --replace-zshrc) replace=1 ;;
     --ghostty) ghostty=1 ;;
     -h|--help) usage; exit 0 ;;
@@ -22,6 +25,16 @@ while (( $# )); do
 done
 [[ -z ${ZDOTDIR:-} || $ZDOTDIR == "$HOME" ]] || { printf 'Custom ZDOTDIR; refusing automatic installation.\n' >&2; exit 1; }
 repo=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+ssh2_target=$HOME/.local/bin/ssh2
+if (( setup_mdns )); then
+  [[ -x $repo/ssh2 ]] || { printf 'Missing executable: %s/ssh2\n' "$repo" >&2; exit 1; }
+  if [[ -e $ssh2_target || -L $ssh2_target ]]; then
+    if [[ ! -L $ssh2_target || $(readlink -- "$ssh2_target") != "$repo/ssh2" ]]; then
+      printf 'Existing %s differs; review and move it aside before rerunning.\n' "$ssh2_target" >&2
+      exit 1
+    fi
+  fi
+fi
 profile=$repo/omarchy/zsh/zshrc
 config=${XDG_CONFIG_HOME:-$HOME/.config}/ghostty/config
 include=$repo/omarchy/ghostty-zsh.conf
@@ -76,6 +89,14 @@ if (( ghostty )); then
     fi
     printf '\n# Dotfiles: use Zsh in Ghostty, keep Bash as the login shell.\n%s\n' "$line" >> "$config"
     printf 'Enabled Zsh in: %s\n' "$config"
+  fi
+fi
+if (( setup_mdns )); then
+  bash "$repo/omarchy/mdns/setup.sh" --apply
+  mkdir -p -- "$HOME/.local/bin"
+  if [[ ! -L $ssh2_target ]]; then
+    ln -s -- "$repo/ssh2" "$ssh2_target"
+    printf 'Linked: %s -> %s/ssh2\n' "$ssh2_target" "$repo"
   fi
 fi
 printf 'Open a new Zsh terminal. The login shell and Bash configuration are unchanged.\n'
