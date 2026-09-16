@@ -28,13 +28,13 @@ chmod +x "$tmp/bin/"*
 export PATH="$tmp/bin:$PATH"
 script="$tmp/packages/setup.sh"
 bash "$script" > "$tmp/output"
-grep -Fxq 'Missing (repo): localsend keepass' "$tmp/output"
+grep -Fxq 'Missing (repo): localsend keepass syncthing' "$tmp/output"
 grep -Fxq 'Missing (aur): megasync-bin' "$tmp/output"
 [[ ! -s "$CALLS" ]]
 printf 'test-aur # Example\n' >> "$tmp/packages/aur.txt"
 if (( EUID != 0 )); then
   bash "$script" --apply > "$tmp/output"
-  grep -Fxq 'pkg add localsend keepass' "$CALLS"
+  grep -Fxq 'pkg add localsend keepass syncthing' "$CALLS"
   grep -Fxq 'pkg aur add megasync-bin test-aur' "$CALLS"
   cp "$CALLS" "$tmp/first-calls"
   bash "$script" --apply > "$tmp/output"

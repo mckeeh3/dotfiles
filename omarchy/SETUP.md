@@ -1050,6 +1050,61 @@ fractional-scaling fix without separate consent. Before approved removal, use
 and removal require separate consent; record the installed version/commit and
 checks actually performed.
 
+## 16. Syncthing
+
+Install Syncthing and run it as the normal user's service on each Omarchy PC.
+It is included in `packages/repo.txt`; the shared package installer installs it
+but does not enable the service. Device pairing and shared folders are
+machine-specific and must be configured separately.
+
+Check first:
+
+```bash
+pacman -Q syncthing
+systemctl --user is-enabled syncthing.service
+systemctl --user is-active syncthing.service
+```
+
+After consent, install only if missing in a visible terminal:
+
+```bash
+omarchy pkg add syncthing
+```
+
+Enable/start only if not already enabled/running, as the normal user (no sudo):
+
+```bash
+systemctl --user enable --now syncthing.service
+```
+
+This starts with the user's systemd session. Do not enable lingering or a second
+system-wide Syncthing instance automatically. Preserve any existing configuration,
+service overrides, device identity, and folder settings; never copy another PC's
+Syncthing configuration or keys into this repository.
+
+Verify:
+
+```bash
+systemctl --user is-enabled syncthing.service  # expected: enabled
+systemctl --user is-active syncthing.service   # expected: active
+curl --fail --silent http://127.0.0.1:8384/rest/noauth/health
+```
+
+The default web UI is <http://127.0.0.1:8384>. For an existing installation,
+respect its configured GUI address, authentication, and TLS rather than resetting
+these to make the check pass. Keep the GUI bound to loopback. With the user,
+pair the intended devices and explicitly choose shared folders. Syncthing can
+propagate file changes and deletions; review folder direction and versioning,
+back up important data, and test a disposable file before sharing real folders.
+Report service readiness separately from successful cross-device synchronization.
+
+Syncthing's defaults include discovery and relay use; review these preferences
+with the user as needed. Firewall changes and remote GUI exposure require separate
+consent and are not performed by this setup. Troubleshoot with
+`journalctl --user -u syncthing.service -n 50 --no-pager`, keeping private paths
+and device identifiers out of reports. To undo autostart on request, use
+`systemctl --user disable --now syncthing.service`; preserve configuration and data.
+
 ## Audit boundaries and exclusions
 
 Compared the live Hyprland, Ghostty, Alacritty, Foot, Kitty, Omarchy shell,

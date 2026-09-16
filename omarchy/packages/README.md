@@ -1,7 +1,8 @@
 # Shared Omarchy apps
 
 These lists define extra apps wanted on every Omarchy PC, not a full export of
-one machine's packages. Shared apps include LocalSend and KeePass (`keepass`, from Arch's extra repository).
+one machine's packages. Shared apps include LocalSend, KeePass (`keepass`, from Arch's extra repository), and Syncthing.
+After installing Syncthing, follow [the user-service setup](../SETUP.md#16-syncthing) to enable it and pair devices; package installation alone does not start it.
 
 - `repo.txt`: packages in enabled pacman repositories (including Omarchy).
 - `aur.txt`: AUR-only packages, including MEGAsync (`megasync-bin`).

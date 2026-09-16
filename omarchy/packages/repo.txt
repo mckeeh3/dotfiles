@@ -2,3 +2,4 @@
 # One package per line; inline comments are supported.
 localsend # Cross-platform local network file sharing
 keepass # Password manager
+syncthing # Peer-to-peer folder synchronization; enable user service per SETUP.md
