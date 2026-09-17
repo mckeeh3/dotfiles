@@ -25,3 +25,8 @@ fi
 if [[ -r ${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles/bash.local.sh ]]; then
   source "${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles/bash.local.sh"
 fi
+
+# Switch interactive SSH sessions to zsh; non-interactive shells return above.
+if [[ -n ${SSH_CONNECTION:-} ]] && command -v zsh >/dev/null 2>&1; then
+  exec zsh
+fi
