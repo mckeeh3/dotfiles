@@ -140,6 +140,15 @@ Do not change the account's Bash login shell.
   Enter executes a selected reverse-search match.
 - Zsh: Vi editing, autosuggestions, syntax highlighting, substring-history arrows,
   fzf Ctrl+R selection for editing (not immediate execution).
+- Zsh sudo shortcut: press Esc twice quickly to prepend `sudo` to the current
+  command; at an empty prompt, recall the last command with `sudo`. Existing
+  `sudo` prefixes are not duplicated. Nothing executes until Enter is pressed.
+  This is included in `omarchy/zsh/zshrc` and deployed automatically by
+  `omarchy-zsh-setup.sh`; no extra plugin or installation step is needed.
+  Existing installations pick it up in a new Zsh shell (`exec zsh`). Validate
+  by typing `echo test`, pressing Esc twice, and checking for `sudo echo test`
+  without pressing Enter; Ctrl+C discards it. A single Esc still enters Vi
+  normal mode.
 - Both: repository Git aliases, directory helpers, zoxide, Starship, and mise
   integration when available. Bash and Zsh keep separate history formats/files.
 - The Bash installer links `~/.local/bin/ssh2` to the repository helper. Its

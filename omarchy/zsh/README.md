@@ -63,6 +63,9 @@ say Bash because it describes the account's login shell.
 - Esc enters Vi normal mode without clearing the command, including after
   Up/Down history navigation; `i` returns to insert mode. Ctrl+C abandons the
   current command line.
+- Press Esc twice quickly to prepend `sudo` to the current command, or recall
+  the last command with `sudo` at an empty prompt. Existing `sudo` prefixes are
+  left alone. Review the command and press Enter to execute it.
 - Ctrl+R opens fzf history search. Enter selects a command for editing, not
   immediate execution; Esc dismisses the picker.
 - Suggestions come from history only. Right-arrow accepts an inline suggestion

@@ -72,8 +72,17 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-zsh-test-") as home:
         press(b"\x1b", "docker container list", "vicmd")
         press(b"A --help", "docker container list --help", "viins")
         press(b"\x1b", "docker container list --help", "vicmd")
+        # Double Esc edits only: never submit these sudo commands.
+        press(b"\x1b\x1b", "sudo docker container list --help", "viins")
+        press(b"\x1b\x1b", "sudo docker container list --help", "viins")
+        press(b"\x1b", "sudo docker container list --help", "vicmd")
+        press(b"0Di", "", "viins")
+        press(b"\x1b\x1b", "sudo nmcli connection list", "viins")
+        press(b"\x1b", "sudo nmcli connection list", "vicmd")
+        press(b"0Diecho sudo-test", "echo sudo-test", "viins")
+        press(b"\x1b\x1b", "sudo echo sudo-test", "viins")
         assert (root / ".bash_history").read_text() == "bash history must stay untouched\n"
-        print("Zsh interactive test passed: substring arrows, Esc, Vi mode, separate history.")
+        print("Zsh interactive test passed: substring arrows, Esc, Vi mode, sudo shortcut, separate history.")
     finally:
         shell.kill()
         shell.wait(timeout=5)

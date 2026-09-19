@@ -69,6 +69,22 @@ fi
 bindkey -M viins '^[' vi-cmd-mode
 bindkey -M vicmd '^[' vi-cmd-mode
 
+# Double Esc prepares a command for sudo without executing it.
+_dotfiles_sudo_command_line() {
+  [[ -n $BUFFER ]] || zle up-history
+  [[ -n $BUFFER ]] || return 0
+  if [[ $BUFFER != sudo && $BUFFER != sudo[[:space:]]* ]]; then
+    BUFFER="sudo $BUFFER"
+  fi
+  CURSOR=${#BUFFER}
+  zle vi-insert
+}
+zle -N _dotfiles_sudo_command_line
+for _dotfiles_map in viins vicmd emacs; do
+  bindkey -M "$_dotfiles_map" '^[^[' _dotfiles_sudo_command_line
+done
+unset _dotfiles_map
+
 # Optional per-user Java/Maven tools; install with omarchy/java/setup.sh.
 export SDKMAN_DIR=${SDKMAN_DIR:-$HOME/.sdkman}
 if [[ -s $SDKMAN_DIR/bin/sdkman-init.sh ]]; then
