@@ -50,6 +50,7 @@ absolute paths. Do not run the legacy `arch-linux-setup.sh` on Omarchy.
 | Browser | Zen (`zen-browser-bin`), default `zen.desktop` | Install through Omarchy |
 | Ghostty shell | `/usr/bin/zsh` | Requires Zsh |
 | Zellij | Installed; `default_shell "/usr/bin/zsh"` | Requires Zsh |
+| Herdr pane shell | Requested: `[terminal] default_shell = "/usr/bin/zsh"` | Requires Zsh; see section 7's Herdr setup |
 | Login apps | Zen on workspace 1; Ghostty + Zellij session `dotfiles` on workspace 4 | Portable preference; see section 7a |
 | Account/login shell | `/usr/bin/bash` | Retain; no `chsh` |
 | Shell profiles | Repository Bash fallback and Zsh profile | Use existing installers |
@@ -425,6 +426,49 @@ by `default_shell`. Do not kill existing sessions to apply this preference.
 This does not enable automatic Zellij startup in Ghostty or Zsh, change the
 account shell, or export session data. Restore the config backup to roll back.
 Other Zellij configuration preferences have not been audited for this guide.
+
+### Herdr: use Zsh for new shell panes
+
+Requested preference: launch Zsh directly in new interactive Herdr panes, rather
+than starting Bash and conditionally switching shells. Apply the Zsh profile from
+section 1 first. If Herdr is not installed, report this step as skipped; installing
+Herdr is separate from this shell preference.
+
+Check `command -v zsh`, `herdr --help`, and `herdr --default-config` on the target
+for support for `[terminal].default_shell` and `server reload-config`. On Omarchy,
+expect Zsh at `/usr/bin/zsh`; verify that executable exists before configuring it.
+Use the config path reported by Herdr (normally `~/.config/herdr/config.toml`),
+checking `HERDR_CONFIG_PATH` and the running server's configuration as well. For
+remote sessions, configure the machine running the panes, not just the client.
+
+If the effective setting already matches, skip mutation. Otherwise back up the
+existing config and merge this setting into its existing `[terminal]` table:
+
+```toml
+[terminal]
+default_shell = "/usr/bin/zsh"
+```
+
+Update an existing `default_shell` rather than adding a duplicate key or table.
+If no config exists, create its parent directory and a minimal config with this
+block. Preserve all other settings, including `shell_mode`, keybindings, and
+workspace preferences. No Bash startup hook or account-shell change is needed.
+
+For a running server using that config, apply with:
+
+```bash
+herdr server reload-config
+```
+
+Require a successful reload; investigate any errors before proceeding. If no
+server is running, start Herdr normally to load the config. Open a **new normal
+shell pane** and run `echo "$ZSH_VERSION"`; expect a nonempty Zsh version. Do not
+use `$SHELL` to verify the running shell: it can still report the account's Bash
+login shell. Existing panes retain their shells; do not restart sessions or
+replace running pane processes. Explicit command panes are outside this setting.
+
+To roll back, restore the previous setting from the backup (or remove only the
+added key if none existed), reload the server config, and verify a new pane.
 
 ## 7a. Login apps: Zen and Ghostty/Zellij
 
