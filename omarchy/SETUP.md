@@ -58,6 +58,7 @@ absolute paths. Do not run the legacy `arch-linux-setup.sh` on Omarchy.
 | Desktop theme | `stellar` | Install from `cicorias/omarchy-stellar-theme`, then activate (section 5) |
 | Default agent | `pi` | Optional; install/authenticate separately |
 | Pi packages | `pi-subagents`, `pi-web-access` | Required for Pi setup; install globally for the user (section 5) |
+| Agent skills | `unslop` | Install for Pi, Codex, and Claude from `omarchy/skills/` (section 5) |
 
 ## Shared apps on every Omarchy PC
 
@@ -321,6 +322,24 @@ functionality in the destination setup report.
 To roll back packages newly added by this step, use
 `pi remove npm:pi-subagents` and/or `pi remove npm:pi-web-access` without `-l`.
 Do not remove packages that were already present before setup.
+
+### Shared agent skills
+
+Install the repository's agent skills for Pi, Codex, and Claude separately from
+Pi packages. `unslop` is the first skill; the installer picks up any additional
+skill directories. Read [skill setup](skills/README.md) and review the skill
+contents before applying. With consent, run from the repository root:
+
+```bash
+bash omarchy/skills/setup.sh
+bash omarchy/skills/setup.sh --apply
+```
+
+The preview changes nothing. The apply step links skill directories into each
+agent's user-level skills directory without overwriting existing entries. If it
+reports a conflict, inspect that entry and move it aside only after approval.
+Keep the repo at its installed path and restart the agents to load the skills.
+Agent binaries and authentication remain separate setup steps.
 
 ## 6. Zen browser and default-browser associations
 
