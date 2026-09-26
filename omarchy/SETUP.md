@@ -57,7 +57,7 @@ absolute paths. Do not run the legacy `arch-linux-setup.sh` on Omarchy.
 | Starship prompt | `omarchy/starship.toml` (Arch Powerline preset) | Default for new installs; existing configs require `--replace-starship` |
 | Desktop theme | `stellar` | Install from `cicorias/omarchy-stellar-theme`, then activate (section 5) |
 | Default agent | `pi` | Optional; install/authenticate separately |
-| Pi packages | `pi-subagents`, `pi-web-access` | Required for Pi setup; install globally for the user (section 5) |
+| Pi packages | `@narumitw/pi-usage`, `pi-intercom`, `pi-subagents`, `pi-web-access` | Required for Pi setup; install globally for the user (section 5) |
 | Agent skills | `unslop` | Install for Pi, Codex, and Claude from `omarchy/skills/` (section 5) |
 
 ## Shared apps on every Omarchy PC
@@ -290,8 +290,9 @@ Do not copy credentials or assume selection means installation is complete.
 ### Global Pi packages
 
 **Requested addition for Omarchy PCs, not an audited installation:** when setting
-up Pi, install `pi-subagents` and `pi-web-access` globally for the destination
-user, so they are available across projects.
+up Pi, install `@narumitw/pi-usage`, `pi-intercom`, `pi-subagents`, and
+`pi-web-access` globally for the destination user, so they are available across
+projects.
 
 First confirm `pi` and `npm` are available and inspect `pi list` for existing
 **global** entries. A project-local entry does not satisfy this requirement.
@@ -303,6 +304,8 @@ settings, package filters, and version pins.
 Run only the command for each missing global package, as the normal user:
 
 ```bash
+pi install npm:@narumitw/pi-usage
+pi install npm:pi-intercom
 pi install npm:pi-subagents
 pi install npm:pi-web-access
 ```
@@ -313,15 +316,15 @@ If `PI_CODING_AGENT_DIR` is overridden, confirm the intended agent directory
 before installing. Existing global installs should be skipped, not upgraded or
 repinned as part of setup.
 
-Verify both appear in the global section of `pi list`, then start a fresh Pi
+Verify all four appear in the global section of `pi list`, then start a fresh Pi
 session and confirm the packages load without errors. Follow each package's
 current documentation for any additional configuration or credentials; keep
 secrets out of this repository. Record installed versions and any unverified
 functionality in the destination setup report.
 
-To roll back packages newly added by this step, use
-`pi remove npm:pi-subagents` and/or `pi remove npm:pi-web-access` without `-l`.
-Do not remove packages that were already present before setup.
+To roll back a package newly added by this step, use `pi remove` with its
+source from the commands above, without `-l`. Do not remove packages that were
+already present before setup.
 
 ### Shared agent skills
 
