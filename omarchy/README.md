@@ -3,7 +3,8 @@
 For the agent-readable desktop and shell replication guide, see
 [SETUP.md](SETUP.md). For optional Java and Maven installation through SDKMAN!,
 see [Java/Maven setup](java/README.md). When setting up Pi, also install the
-[global Pi packages](SETUP.md#global-pi-packages): `pi-subagents` and `pi-web-access`.
+[global Pi packages](SETUP.md#global-pi-packages): `@narumitw/pi-usage`,
+`pi-intercom`, `pi-subagents`, and `pi-web-access`.
 Install the [shared agent skills](skills/README.md) separately for Pi, Codex,
 and Claude; the current list includes `unslop`.
 
