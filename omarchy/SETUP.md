@@ -54,6 +54,7 @@ absolute paths. Do not run the legacy `arch-linux-setup.sh` on Omarchy.
 | Login apps | Zen on workspace 1; Ghostty + Zellij session `dotfiles` on workspace 4 | Portable preference; see section 7a |
 | Account/login shell | `/usr/bin/bash` | Retain; no `chsh` |
 | Shell profiles | Repository Bash fallback and Zsh profile | Use existing installers |
+| Akka CLI | Requested: `/usr/local/bin/akka`, with Zsh completion | Install from upstream if missing; see section 1 |
 | Starship prompt | `omarchy/starship.toml` (Arch Powerline preset) | Default for new installs; existing configs require `--replace-starship` |
 | Desktop theme | `stellar` | Install from `cicorias/omarchy-stellar-theme`, then activate (section 5) |
 | Default agent | `pi` | Optional; install/authenticate separately |
@@ -134,6 +135,40 @@ initial setup, not the current terminal preference.
 Run `omarchy restart terminal` after reviewing its target-version behavior, then
 open a **new Ghostty window**. Existing shells do not turn into Zsh on reload.
 Do not change the account's Bash login shell.
+
+### Akka CLI
+
+Requested addition, not an audited installation. Install the Akka CLI from
+<https://doc.akka.io/install-cli.sh> if `command -v akka` finds no existing
+installation. Inspect an existing `/usr/local/bin/akka` or symlink before
+proceeding; do not overwrite it without consent.
+
+Review the upstream script before running it. It downloads and executes code as
+the current user; only copying the binary requires `sudo`. After consent, run in
+a visible Bash terminal:
+
+```bash
+if ! command -v akka >/dev/null 2>&1; then
+  (
+    set -euo pipefail
+    tmp=$(mktemp -d)
+    trap 'rm -rf -- "$tmp"' EXIT
+    curl -fsSL https://doc.akka.io/install-cli.sh | bash -s -- --prefix "$tmp"
+    sudo install -m 0755 -- "$tmp/akka" /usr/local/bin/akka
+  )
+fi
+```
+
+This uses a private temporary directory instead of shared `/tmp/akka`, reports
+HTTP failures, and installs a root-owned executable. The upstream installer asks
+for confirmation and selects its latest release by default. This is a separate
+step; the shell installers remain configuration-only.
+
+Validate with `command -v akka` and `akka --help`. Open a new Zsh shell or run
+`exec zsh`; `omarchy/zsh/zshrc` generates `akka completion zsh` into
+`${XDG_CACHE_HOME:-$HOME/.cache}/zsh/completions/_akka` before `compinit`.
+Type `akka ` and press Tab to check completion. Authentication and project
+configuration are separate; keep credentials out of this repository.
 
 ### Shell behavior being preserved
 

@@ -16,12 +16,21 @@ PROFILE = Path(__file__).resolve().parents[1] / "zsh" / "zshrc"
 with tempfile.TemporaryDirectory(prefix="dotfiles-zsh-test-") as home:
     root = Path(home)
     (root / ".cache").mkdir()
+    (root / ".local/bin").mkdir(parents=True)
+    akka = root / ".local/bin/akka"
+    akka.write_text(
+        "#!/bin/sh\n"
+        '[ "$1" = completion ] && [ "$2" = zsh ] || exit 1\n'
+        "printf '%s\\n' '#compdef akka' '_akka() { _arguments \"--help[Show help]\"; }'\n"
+    )
+    akka.chmod(0o755)
     (root / ".zsh_history").write_text(
         "echo unrelated\ndocker container list\necho other\nnmcli connection list\n"
     )
     (root / ".bash_history").write_text("bash history must stay untouched\n")
     (root / ".zshrc").write_text(
         f"source {shlex.quote(str(PROFILE))}\n"
+        'print -r -- "${_comps[akka]}" > "$HOME/akka-completion"\n'
         "autoload -Uz add-zle-hook-widget\n"
         "_test_snapshot() { print -r -- \"$BUFFER\" > \"$HOME/state\"; "
         "print -r -- \"$KEYMAP\" >> \"$HOME/state\"; }\n"
@@ -59,6 +68,8 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-zsh-test-") as home:
     try:
         startup = drain(5)
         assert "command not found" not in startup and "missing zsh-" not in startup, startup
+        assert (root / ".cache/zsh/completions/_akka").read_text().startswith("#compdef akka\n")
+        assert (root / "akka-completion").read_text().strip() == "_akka"
         press(b"list", "list")
         press(b"\x1b[A", "nmcli connection list")
         press(b"\x1b[A", "docker container list")
@@ -82,7 +93,7 @@ with tempfile.TemporaryDirectory(prefix="dotfiles-zsh-test-") as home:
         press(b"0Diecho sudo-test", "echo sudo-test", "viins")
         press(b"\x1b\x1b", "sudo echo sudo-test", "viins")
         assert (root / ".bash_history").read_text() == "bash history must stay untouched\n"
-        print("Zsh interactive test passed: substring arrows, Esc, Vi mode, sudo shortcut, separate history.")
+        print("Zsh interactive test passed: Akka completion, substring arrows, Esc, Vi mode, sudo shortcut, separate history.")
     finally:
         shell.kill()
         shell.wait(timeout=5)

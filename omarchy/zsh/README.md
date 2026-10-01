@@ -16,6 +16,10 @@ omarchy pkg add ghostty zsh zsh-autosuggestions zsh-syntax-highlighting zsh-hist
 omarchy pkg add fzf starship zoxide mise
 ```
 
+For the Akka CLI, follow the [installation step](../SETUP.md#akka-cli).
+The shell installer does not install it; the profile enables its completion when
+`akka` is available.
+
 From the repository root:
 
 ```bash
@@ -70,6 +74,8 @@ say Bash because it describes the account's login shell.
   immediate execution; Esc dismisses the picker.
 - Suggestions come from history only. Right-arrow accepts an inline suggestion
   at the end of the command. Tab explicitly requests completion.
+- If `akka` is installed, startup generates its Zsh completion in
+  `${XDG_CACHE_HOME:-$HOME/.cache}/zsh/completions/_akka` before `compinit`.
 - Syntax highlighting, Vi editing, Oh My Zsh-style Git aliases, `autocd`, and
   directory-stack shortcuts (`d`, `1`–`5`) are enabled.
 - mise, zoxide (`z`), fzf, and Starship use their native Zsh integrations.
