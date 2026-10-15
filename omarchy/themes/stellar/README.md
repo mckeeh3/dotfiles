@@ -2,12 +2,13 @@
 
 Local palette override for the installed Stellar theme. Sets dark selection text
 on the theme's near-white highlight, fixing invisible selected Yes/No buttons in
-Gum and selected text in Ghostty and other generated terminal configs.
+Gum and selected text in Ghostty and other generated terminal configs. Normal
+foreground text stays light on the dark terminal background.
 
 After installing Stellar, inspect `~/.config/omarchy/themes/stellar/colors.toml`.
-If it has other custom colors, back it up and merge only `selection = "#f0f6fc"`
-and `selection_foreground = "#0d1117"`. Otherwise, after approving replacement,
-run from the dotfiles repository root:
+If it has other custom colors, back it up and merge only `selection = "#f0f6fc"`,
+`selection_background = "#f0f6fc"`, and `selection_foreground = "#0d1117"`.
+Otherwise, after approving replacement, run from the dotfiles repository root:
 
 ```bash
 (
@@ -26,15 +27,16 @@ run from the dotfiles repository root:
       printf 'Palette backup: %s\n' "$backup/colors.toml"
     fi
     cp omarchy/themes/stellar/colors.toml "$target"
-    omarchy theme set stellar
+    OMARCHY_THEME_SKIP_BACKGROUND=1 omarchy theme set stellar
   fi
 )
 ```
 
-If the palette already matches, skip replacement. Apply `omarchy theme set stellar`
-only if Stellar is not active or generated colors are stale. Verify
-`~/.local/state/omarchy/current/theme/gum_env.lua` sets the selected foreground to
-`#0d1117` and selected background to `#f0f6fc`.
+If the palette already matches, skip replacement. Reapply Stellar with
+`OMARCHY_THEME_SKIP_BACKGROUND=1 omarchy theme set stellar` only if it is not
+active or generated colors are stale. The setting preserves the current wallpaper.
+Verify that `~/.local/state/omarchy/current/theme/gum_env.lua` sets the selected
+foreground to `#0d1117` and selected background to `#f0f6fc`.
 
 ## Stale Gum environment
 

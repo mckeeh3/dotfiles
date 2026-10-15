@@ -1,5 +1,6 @@
 accent = "#58a6ff"
 selection = "#f0f6fc"
+selection_background = "#f0f6fc"
 # Keep selected text readable on Stellar's near-white highlight.
 selection_foreground = "#0d1117"
 

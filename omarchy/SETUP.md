@@ -315,16 +315,19 @@ unreadable. The required palette settings are:
 
 ```toml
 selection = "#f0f6fc"
+selection_background = "#f0f6fc"
 selection_foreground = "#0d1117"
 ```
 
 Before final activation, apply [the tracked contrast override](themes/stellar/README.md)
 from `omarchy/themes/stellar/colors.toml`. Inspect and back up the installed
-palette first. If it has other custom colors, merge only these two settings
+palette first. If it has other custom colors, merge only these three settings
 rather than replacing the palette. Skip the write if they already match.
+When reapplying Stellar, set `OMARCHY_THEME_SKIP_BACKGROUND=1` to keep the
+current wallpaper.
 
-Apply `omarchy theme set stellar` only if the theme is not active or its generated
-colors are stale. Check `~/.local/state/omarchy/current/theme/gum_env.lua` for
+Reapply Stellar only if the theme is not active or its generated colors are stale.
+Check `~/.local/state/omarchy/current/theme/gum_env.lua` for
 `GUM_CONFIRM_SELECTED_FOREGROUND` set to `#0d1117` and
 `GUM_CONFIRM_SELECTED_BACKGROUND` set to `#f0f6fc`. Ghostty's generated
 `selection-foreground` and `selection-background` should match. Verify that
