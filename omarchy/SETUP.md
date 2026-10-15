@@ -292,7 +292,7 @@ theme as part of setup. This supersedes the original `tokyo-night` desktop
 selection; the repository's Starship prompt remains independent and unchanged.
 
 Check `omarchy theme install --help`, `omarchy theme set --help`, and
-`omarchy theme current` on the target machine first. Then run:
+`omarchy theme current` on the target machine first. Install if missing:
 
 ```bash
 (
@@ -300,17 +300,43 @@ Check `omarchy theme install --help`, `omarchy theme set --help`, and
   if [[ ! -e "$HOME/.config/omarchy/themes/stellar" && ! -L "$HOME/.config/omarchy/themes/stellar" ]]; then
     omarchy theme install https://github.com/cicorias/omarchy-stellar-theme
   fi
-  if [[ "$(omarchy theme current)" != "Stellar" ]]; then
-    omarchy theme set stellar
-  fi
 )
 ```
 
-The installer also activates the theme, so the second check avoids applying it
-twice. Do not reinstall over an existing `stellar` directory: inspect its origin
-and local changes first, and back it up before any approved replacement (the
-installer removes existing theme files). If already installed and active, skip
-both mutations. Verify that `omarchy theme current` reports `Stellar`.
+The installer also activates the theme. Do not reinstall over an existing
+`stellar` directory: inspect its origin and local changes first, and back it up
+before any approved replacement. The installer removes existing theme files.
+
+### Selected text contrast
+
+Stellar uses a near-white selection background. Omarchy's default
+`selection_foreground` is also light, making selected Yes/No buttons in Gum
+unreadable. The required palette settings are:
+
+```toml
+selection = "#f0f6fc"
+selection_foreground = "#0d1117"
+```
+
+Before final activation, apply [the tracked contrast override](themes/stellar/README.md)
+from `omarchy/themes/stellar/colors.toml`. Inspect and back up the installed
+palette first. If it has other custom colors, merge only these two settings
+rather than replacing the palette. Skip the write if they already match.
+
+Apply `omarchy theme set stellar` only if the theme is not active or its generated
+colors are stale. Check `~/.local/state/omarchy/current/theme/gum_env.lua` for
+`GUM_CONFIRM_SELECTED_FOREGROUND` set to `#0d1117` and
+`GUM_CONFIRM_SELECTED_BACKGROUND` set to `#f0f6fc`. Ghostty's generated
+`selection-foreground` and `selection-background` should match. Verify that
+`omarchy theme current` reports `Stellar`.
+
+An already-running shell or terminal server can retain the previous Gum colors.
+Check `printenv GUM_CONFIRM_SELECTED_FOREGROUND` inside the affected terminal
+and `systemctl --user show-environment` for stale user-service values. See the
+contrast guide for updating those values without reapplying an already-correct
+theme. Open a fresh terminal afterward and run `gum confirm "Is this readable?"`.
+This test performs no action. Selected Yes and No must both show dark text on
+the light highlight; changing the normal terminal foreground is not the fix.
 
 Do not copy generated files from `~/.local/state/omarchy/current/`. Install from
 the theme repository instead; this follows its default branch rather than a
