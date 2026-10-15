@@ -68,6 +68,7 @@ ssh2                          # Configured targets + mDNS (bounded discovery)
 ssh2 --no-mdns                # Configured targets only
 ssh2 --scan                   # Discover targets on 192.168.7.0/24
 ssh2 --scan 192.168.8.0/24     # Discover targets on another IPv4 subnet
+ssh2 --sync-ssh-config         # Add manual labels as SSH aliases
 ```
 
 For Omarchy, `bash omarchy-setup.sh --setup-mdns` (or
@@ -79,6 +80,11 @@ Automatic discovery is IPv4-only; manual IPv6/SSH aliases still work. Missing or
 failing discovery tools fall back to configured targets. Discovered targets
 prompt for a username and honor advertised ports; manual entries keep existing
 SSH config behavior. Discoveries are never saved to the config.
+`--sync-ssh-config` updates only a marked block in `~/.ssh/config` from manual
+`ssh2.config` entries. It refuses an alias already defined outside that block;
+review SSH `Include` files and wildcard `Host` rules yourself before syncing.
+Use IPs or resolvable DNS names as addresses: SSH does not expand `HostName`
+through another SSH alias.
 
 Scanning requires Nmap (`sudo pacman -S nmap` on Arch, `brew install nmap`
 on macOS), but does not require sudo. Only scan networks you own or have
@@ -91,7 +97,7 @@ for an SSH username (Enter uses your local username). Discoveries are never
 written to the config. An open TCP port 22 does not guarantee an SSH service
 or valid login credentials; SSH on other ports is not discovered.
 
-Validation: `bash -n ssh2`, `bash -n lib/ssh2-mdns.sh`, and
+Validation: `bash -n ssh2 lib/ssh2-mdns.sh lib/ssh2-config.sh`, and
 `python3 -m unittest discover -s tests -p 'test_ssh2*.py'`
 (the tests mock discovery, Nmap, SSH, and privileged setup; no live network or system changes).
 

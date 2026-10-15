@@ -10,10 +10,17 @@ names and TXT records never supply SSH options, usernames, or commands.
 ssh2                   # Manual targets + a bounded mDNS snapshot
 ssh2 --no-mdns         # Manual config only; no discovery dependencies
 ssh2 --scan            # Existing TCP-22 scan, independent of mDNS
+ssh2 --sync-ssh-config # Save manual labels as SSH Host aliases
 ```
 
 Manual config is still `label address`, one target per line; addresses may also
-be SSH aliases/hostnames. Use `~/.ssh/config` for usernames, nonstandard ports,
+be SSH aliases/hostnames. `--sync-ssh-config` writes only these manual labels
+as `Host` / `HostName` pairs in a marked block in `~/.ssh/config`. It leaves
+other config lines intact, refuses a duplicate alias outside its block, and does
+not use discoveries. Review `Include` files and wildcard `Host` rules yourself.
+The generated config is private (`0600`); existing config symlinks are refused.
+Use IPs or DNS names for synced addresses: SSH does not expand `HostName`
+through another SSH alias. Use `~/.ssh/config` for usernames, nonstandard ports,
 and IPv6-only machines. No config is required when mDNS supplies targets, and
 no discoveries are ever written to the config. For duplicate address+port or
 `.local` hostname+port records, the manual entry wins (manual entries are treated
@@ -118,7 +125,7 @@ not record their previous state or provide an automatic rollback.
 ## Offline validation
 
 ```bash
-for file in ssh2 lib/ssh2-mdns.sh omarchy/mdns/setup.sh omarchy-setup.sh omarchy-zsh-setup.sh; do
+for file in ssh2 lib/ssh2-mdns.sh lib/ssh2-config.sh omarchy/mdns/setup.sh omarchy-setup.sh omarchy-zsh-setup.sh; do
   bash -n "$file" || break
 done
 python3 -m unittest discover -s tests -p 'test_ssh2*.py'

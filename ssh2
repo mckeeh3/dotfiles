@@ -12,15 +12,17 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "$SCRIPT_PATH")" && pwd)
 CONFIG_FILE="$SCRIPT_DIR/ssh2.config"
 
 usage() {
-  printf 'Usage: ssh2 [--no-mdns | --scan [IPv4-subnet/CIDR]]\n\n'
+  printf 'Usage: ssh2 [--no-mdns | --scan [IPv4-subnet/CIDR] | --sync-ssh-config]\n\n'
   printf 'Without arguments, merge ssh2.config with mDNS SSH discoveries (5-second wait budget, capped results).\n'
   printf 'With --no-mdns, use only ssh2.config. Discoveries are never saved.\n'
   printf 'With --scan, discover open SSH ports (TCP 22); default: 192.168.7.0/24.\n'
   printf 'Scan results are temporary. Only scan networks you have permission to scan.\n'
+  printf 'With --sync-ssh-config, install manual labels as SSH Host aliases in ~/.ssh/config.\n'
 }
 
 scan=false
 mdns=true
+sync_ssh_config=false
 subnet=192.168.7.0/24
 case "${1:-}" in
   --scan)
@@ -30,6 +32,11 @@ case "${1:-}" in
     ;;
   --no-mdns)
     [[ $# -eq 1 ]] || { usage >&2; exit 1; }
+    mdns=false
+    ;;
+  --sync-ssh-config)
+    [[ $# -eq 1 ]] || { usage >&2; exit 1; }
+    sync_ssh_config=true
     mdns=false
     ;;
   -h|--help)
@@ -88,6 +95,16 @@ if [[ -f "$CONFIG_FILE" ]]; then
     prompt_user+=(false)
     mdns_hosts+=("")
   done < "$CONFIG_FILE"
+fi
+
+if $sync_ssh_config; then
+  if [[ ! -r $SCRIPT_DIR/lib/ssh2-config.sh ]]; then
+    echo 'SSH config helper missing; keep ssh2 with its lib directory.' >&2
+    exit 1
+  fi
+  source "$SCRIPT_DIR/lib/ssh2-config.sh"
+  ssh2_sync_ssh_config
+  exit 0
 fi
 
 if $scan; then

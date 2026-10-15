@@ -22,7 +22,8 @@ class SSH2Tests(unittest.TestCase):
         shutil.copytree(repo / "lib", self.root / "lib")
         self.config = self.root / "ssh2.config"
         self.config.write_text("known 192.168.7.10\n")
-        self.env = dict(os.environ, PATH=f"{self.root}:{os.environ['PATH']}", TERM="xterm")
+        self.env = dict(os.environ, PATH=f"{self.root}:{os.environ['PATH']}", TERM="xterm",
+                        HOME=str(self.root))
         self.env["MOCK_LOG"] = str(self.root / "nmap.args")
         self.env["MOCK_RESULTS"] = (
             "Host: 192.168.7.10 (dns-name)\tPorts: 22/open/tcp//ssh///\n"
@@ -376,6 +377,73 @@ fi
         code, output = self.interactive([], [("known (192.168.7.10)", b"q")])
         self.assertEqual(code, 0, output)
         self.assertIn("Bonjour discovery failed", output)
+
+    def test_sync_ssh_config_creates_aliases_without_discovery(self):
+        self.config.write_text("known 192.168.7.10\nlab lab.local\n")
+        target = self.root / ".ssh/config"
+        result = self.run_cli("--sync-ssh-config")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(target.read_text(),
+                         "# BEGIN ssh2 managed hosts\n"
+                         "Host known\n    HostName 192.168.7.10\n"
+                         "Host lab\n    HostName lab.local\n"
+                         "# END ssh2 managed hosts\n")
+        self.assertEqual(target.stat().st_mode & 0o777, 0o600)
+        self.assertFalse((self.root / "nmap.args").exists())
+        self.assertFalse((self.root / "nmap.args.mdns").exists())
+        before = target.read_bytes()
+        self.assertEqual(self.run_cli("--sync-ssh-config").returncode, 0)
+        self.assertEqual(target.read_bytes(), before)
+        # OpenSSH resolves the generated alias to its configured address.
+        if shutil.which("ssh"):
+            result = subprocess.run(["ssh", "-F", str(target), "-G", "known"],
+                                    capture_output=True, text=True, timeout=5)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn("hostname 192.168.7.10\n", result.stdout)
+
+    def test_sync_preserves_other_hosts_and_replaces_only_own_block(self):
+        ssh_dir = self.root / ".ssh"
+        ssh_dir.mkdir()
+        target = ssh_dir / "config"
+        target.write_text("Host personal\n    HostName home.local\n")
+        self.assertEqual(self.run_cli("--sync-ssh-config").returncode, 0)
+        self.config.write_text("new-host 192.168.7.23\n")
+        self.assertEqual(self.run_cli("--sync-ssh-config").returncode, 0)
+        self.assertEqual(target.read_text(),
+                         "Host personal\n    HostName home.local\n"
+                         "# BEGIN ssh2 managed hosts\n"
+                         "Host new-host\n    HostName 192.168.7.23\n"
+                         "# END ssh2 managed hosts\n")
+
+    def test_sync_refuses_conflicts_bad_markers_and_symlinks(self):
+        ssh_dir = self.root / ".ssh"
+        ssh_dir.mkdir()
+        target = ssh_dir / "config"
+        for existing in ("Host known\n", "Host KNOWN other\n",
+                         "# BEGIN ssh2 managed hosts\n", "# END ssh2 managed hosts\n"):
+            with self.subTest(existing=existing):
+                target.write_text(existing)
+                result = self.run_cli("--sync-ssh-config")
+                self.assertNotEqual(result.returncode, 0)
+                self.assertEqual(target.read_text(), existing)
+        target.unlink()
+        target.symlink_to(self.config)
+        self.assertNotEqual(self.run_cli("--sync-ssh-config").returncode, 0)
+        self.assertEqual(self.config.read_text(), "known 192.168.7.10\n")
+
+    def test_sync_missing_manual_config_does_not_write(self):
+        self.config.unlink()
+        result = self.run_cli("--sync-ssh-config")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse((self.root / ".ssh").exists())
+
+    def test_sync_refuses_invalid_or_duplicate_aliases(self):
+        for contents in ("bad* 192.168.7.10\n", "known 192.168.7.10\nKNOWN 192.168.7.11\n",
+                         "known #bad\n", "# empty\n"):
+            with self.subTest(contents=contents):
+                self.config.write_text(contents)
+                self.assertNotEqual(self.run_cli("--sync-ssh-config").returncode, 0)
+                self.assertFalse((self.root / ".ssh/config").exists())
 
     def test_help(self):
         self.config.unlink()
