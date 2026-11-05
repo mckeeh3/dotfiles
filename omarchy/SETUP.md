@@ -6,6 +6,8 @@ This guide captures settings observed on an Omarchy **4.0.3-1** installation,
 plus the reusable shell profiles in this repository. It is an audit of current
 state, not a complete history of past agent conversations or all system changes.
 Differences from packaged defaults do not necessarily prove a user customization.
+The boot/login inventory in section 17 was rechecked on 2026-11-05 with Omarchy
+**4.5.0-3** installed; the other sections still reflect the 4.0.3-1 audit.
 
 Use this guide together with [Bash setup](README.md) and
 [Zsh setup](zsh/README.md). The repository must remain at its installed location:
@@ -52,6 +54,8 @@ absolute paths. Do not run the legacy `arch-linux-setup.sh` on Omarchy.
 | Zellij | Installed; `default_shell "/usr/bin/zsh"` | Requires Zsh |
 | Herdr pane shell | Requested: `[terminal] default_shell = "/usr/bin/zsh"` | Requires Zsh; see section 7's Herdr setup |
 | Login apps | Zen on workspace 1; Ghostty + Zellij session `dotfiles` on workspace 4 | Portable preference; see section 7a |
+| Boot/login services | Inventory and exposure checks in section 17 | Review per PC; do not copy blindly |
+| Docker CLI | Requested: sudoless (normal user in `docker` group) | Root-equivalent; confirm per PC (section 18) |
 | Account/login shell | `/usr/bin/bash` | Retain; no `chsh` |
 | Shell profiles | Repository Bash fallback and Zsh profile | Use existing installers |
 | Akka CLI | Requested: `/usr/local/bin/akka`, with Zsh completion | Install from upstream if missing; see section 1 |
@@ -1244,6 +1248,153 @@ consent and are not performed by this setup. Troubleshoot with
 and device identifiers out of reports. To undo autostart on request, use
 `systemctl --user disable --now syncthing.service`; preserve configuration and data.
 
+## 17. What starts at boot and login
+
+This is the startup inventory observed on 2026-11-05 (Omarchy 4.5.0-3
+installed). Use it to check that a target PC starts what this setup expects and
+nothing surprising. "Omarchy" means a packaged default; leave those alone unless
+the user asks. "This setup" means a step in this guide.
+
+SDDM autologin is configured (`/etc/sddm.conf.d/autologin.conf`, written by the
+Omarchy installer), so booting goes straight into the Hyprland session. The disk
+encryption passphrase is the only prompt, and everything under "Login" starts at
+boot too. Do not change autologin without the user's consent.
+
+### Boot (system units, before login)
+
+| Unit | Source | Notes |
+| --- | --- | --- |
+| `NetworkManager`, `systemd-resolved`, `systemd-timesyncd` | Omarchy/Arch | Networking, DNS, clock |
+| `bluetooth`, `cups` (+ `.socket`, `.path`), `power-profiles-daemon`, `systemd-oomd` | Omarchy | Desktop hardware services |
+| `docker.socket` | Omarchy | Starts the daemon on first use; socket only, no TCP listener |
+| `ufw` | Omarchy | Loads rules only when `/etc/ufw/ufw.conf` has `ENABLED=yes` |
+| `sddm` | Omarchy | Display manager with autologin |
+| `limine-snapper-sync`, `snapper-cleanup.timer` | Omarchy | Btrfs snapshot boot entries |
+| `linux-modules-cleanup` | Omarchy | Moves old kernel modules to `/usr/lib/modules/.old` |
+| `sshd`, `avahi-daemon` | This setup (`omarchy/mdns/setup.sh`) | SSH on port 22 for all interfaces, advertised over mDNS |
+| `plocate-updatedb`, `man-db`, `shadow`, `archlinux-keyring-wkd-sync`, `systemd-tmpfiles-clean` timers | Arch | Maintenance |
+
+Check with `systemctl list-unit-files --state=enabled` and `systemctl list-timers`.
+
+### Login (user session)
+
+| What | Source | Where it is configured |
+| --- | --- | --- |
+| `owed` (wallpaper), `bt-agent`, `omarchy-crash-watch`, `omarchy-fcitx5`, `omarchy-sleep-lock`, `omarchy-migrate-notify`, `omarchy-recover-internal-monitor` | Omarchy | User units in `/usr/lib/systemd/user/` |
+| `pipewire`, `pipewire-pulse`, `wireplumber`, `gnome-keyring-daemon`, `xdg-user-dirs` | Omarchy/Arch | User units and sockets |
+| `syncthing.service` | This setup (section 16) | `systemctl --user enable` |
+| `voxtype.service` | Voxtype | `~/.config/systemd/user/voxtype.service` (see note below) |
+| Omarchy shell/bar, first-run provisioning, power-profile init, monitor watch, `udiskie` automount, `herdr server`, `post-boot` hook | Omarchy | `/usr/share/omarchy/default/hypr/autostart.lua` (`herdr server` is new in 4.5) |
+| Zen on workspace 1; Ghostty + Zellij `dotfiles` on workspace 4 | This setup (section 7a) | `~/.config/hypr/autostart.lua` |
+| LocalSend (`--hidden`) | The app itself (its launch-at-login setting) | `~/.config/autostart/localsend_app.desktop` |
+| MEGAsync | The app itself (launch-at-startup preference, on by default) | `~/.config/autostart/megasync.desktop` |
+
+`~/.config/autostart/` also holds `Hidden=true` entries for `org.fcitx.Fcitx5`,
+`print-applet`, and `limine-snapper-notify`. These come from Omarchy and stop
+duplicate launches (fcitx5 already runs as `omarchy-fcitx5.service`). Keep them.
+
+The Voxtype unit in `~/.config/systemd/user/` overrides the packaged
+`/usr/lib/systemd/user/voxtype.service`. On the audited PC the local copy dated
+from 2026-09-02 and was older: it lacked the packaged `After=` PipeWire ordering,
+`Wants=ydotool.service`, and `-q`. Do not copy the local unit to other PCs; enable
+the packaged one with `systemctl --user enable --now voxtype.service`. Ask before
+removing an existing override.
+
+Check with `systemctl --user list-unit-files --state=enabled`,
+`ls ~/.config/autostart`, and `cat ~/.config/hypr/autostart.lua`. To stop an
+app-created autostart entry, turn off the app's own launch-at-login setting
+instead of deleting the file, or the app may write it again.
+
+### Network exposure checks
+
+Services that start at boot or login and listen beyond loopback:
+
+| Port | Service | Notes |
+| --- | --- | --- |
+| 22/tcp | `sshd` | Started by `omarchy/mdns/setup.sh`; password login stays on unless configured; UFW: LAN only, rate limited |
+| 5353/udp | `avahi-daemon` | mDNS; UFW: LAN only |
+| 53317/tcp+udp | LocalSend | Omarchy's firewall setup allows it from anywhere |
+| 22000/tcp+udp, 21027/udp | Syncthing | Defaults also use UPnP/NAT-PMP, which can open a router port; UFW: LAN only |
+
+Inspect the following before changing anything, and change each one only after
+the user consents:
+
+1. **Firewall.** Omarchy's installer sets `ENABLED=yes` in `/etc/ufw/ufw.conf`.
+   On the audited PC it had been switched to `ENABLED=no` (2026-09-02), so no
+   rules were loaded even though `ufw.service` showed active. It was turned back
+   on 2026-11-05. Check with `sudo ufw status verbose`. Omarchy's rules allow
+   LocalSend but not SSH, so enabling UFW without the rules below blocks the
+   `ssh2` targets and Syncthing's LAN connections. Desired rules, limited to the
+   private home range (adjust if the LAN is not in `192.168.0.0/16`):
+
+   ```bash
+   lan=192.168.0.0/16
+   sudo ufw limit from "$lan" to any port 22 proto tcp comment 'ssh (LAN, rate limited)'
+   sudo ufw allow from "$lan" to any port 5353 proto udp comment 'mdns (LAN)'
+   sudo ufw allow from "$lan" to any port 22000 comment 'syncthing (LAN)'
+   sudo ufw allow from "$lan" to any port 21027 proto udp comment 'syncthing discovery (LAN)'
+   sudo ufw --force enable
+   ```
+
+   UFW skips rules that already exist, so reruns are safe. Check first for an
+   active SSH session (`ss -tn state established '( sport = :22 )'`) from outside
+   the LAN range, which these rules would cut off. Syncthing still reaches other
+   networks through relays; NAT-traversal port mappings no longer accept inbound
+   connections.
+2. **SSH authentication.** Check `sudo sshd -T | grep -i passwordauthentication`
+   and whether `~/.ssh/authorized_keys` exists. Never turn off password login
+   before a key is authorized: that locks out remote access. Omarchy's
+   `omarchy-setup-security-sshd` authorizes a key, writes
+   `/etc/ssh/sshd_config.d/10-omarchy-hardening.conf`, and adds a rate-limited
+   UFW rule, in that order.
+3. **Syncthing NAT traversal.** If only LAN sync is wanted, turn off NAT
+   traversal (and optionally global discovery and relays) in the Syncthing GUI.
+   The Syncthing protocol authenticates devices; this only reduces exposure.
+
+### Boot time
+
+Each boot after an update runs `ldconfig` and `systemd-tmpfiles-setup`
+(`ConditionNeedsUpdate`). The first boot after a kernel update also runs
+`linux-modules-cleanup`, which copies the previous kernel's modules. The audited
+PC is an iMac with its root on a spinning disk, where these took about 30 seconds
+and 4.5 minutes; normal boots are much faster. Use `systemd-analyze blame` and
+`systemd-analyze critical-chain` to tell one-time costs from regressions.
+
+## 18. Docker without sudo
+
+Omarchy deliberately does not add the user to the `docker` group: the daemon
+runs as root, so group membership is equivalent to passwordless root (any
+process running as the user can `docker run -v /:/host` and rewrite the host).
+By default the `docker` CLI needs `sudo`, and Omarchy's Docker TUI asks through
+polkit.
+
+This setup requests sudoless Docker for the normal user. Explain the
+root-equivalence to the user and obtain explicit consent on each PC. Check first:
+
+```bash
+getent group docker            # already a member if the user is listed
+docker info >/dev/null && echo "sudoless docker works"
+```
+
+Apply in a visible terminal as the normal user. It prompts for confirmation and
+the sudo password:
+
+```bash
+omarchy-setup-security-sudoless-docker
+```
+
+The same command is in the Omarchy menu under Setup > Security > Sudoless Docker.
+It runs `sudo usermod -aG docker "$USER"` and marks a reboot as required.
+Omarchy notes that logging out or `newgrp` does not reliably apply the new group,
+so verify after a reboot:
+
+```bash
+id -nG | grep -qw docker && docker run --rm hello-world
+```
+
+Do not use `chmod`, socket overrides, or a TCP listener to work around the group.
+To undo, run `omarchy-remove-security-sudoless-docker` and reboot.
+
 ## Audit boundaries and exclusions
 
 Compared the live Hyprland, Ghostty, Alacritty, Foot, Kitty, Omarchy shell,
@@ -1263,13 +1414,15 @@ other Zellij settings and session state were not exported.
 - Extra post-update hooks invited setup of dictation, fingerprint authentication,
   and a default agent. Their contents look like setup invitations, not portable
   personal policy; they were not copied. Presence does not establish completion.
-- Voxtype was installed, but its models, shortcuts, and service setup were not
-  audited. Fingerprint/PAM setup and other privileged system changes were not audited.
+- Voxtype was installed, but its models and shortcuts were not audited. Its user
+  service is covered in section 17. Fingerprint/PAM setup and other privileged
+  system changes were not audited.
 - Git config differed from its template but was intentionally not exported;
   review identity, signing, and credentials locally on each destination.
 - Backups, generated theme state, histories, SSH data, and secrets are excluded.
-- This is not a full installed-package, system-service, editor, or agent-config
-  inventory. Future discoveries should be added after confirming intent.
+- Section 17 lists enabled boot/login services and autostart entries, but this
+  is not a full installed-package, editor, or agent-config inventory. Future
+  discoveries should be added after confirming intent.
 
 ## Final verification and reporting
 
@@ -1289,6 +1442,8 @@ and shell identity (`echo "$ZSH_VERSION"` in Ghostty; `$SHELL` may still be Bash
 Verify the desktop browser shortcut and HTTP/HTTPS links open Zen.
 Verify the desktop terminal shortcut opens Ghostty, tile gaps/animations look
 right, the display is readable, and idle locking works at the chosen time.
+Compare enabled services and autostart entries with section 17. If sudoless
+Docker was approved, confirm `docker info` works without sudo after the reboot.
 
 Record target Omarchy version, modified paths, backup locations, tests actually
 run, and anything skipped. Reapplying the guide should produce no duplicate

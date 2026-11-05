@@ -114,7 +114,12 @@ registration requires a separately configured LaunchAgent/LaunchDaemon.
 - mDNS generally stays within the same LAN/VLAN. Guest Wi-Fi/client isolation,
   multicast filtering, and firewalls may block it. Allow UDP 5353 multicast and
   the configured SSH TCP port only on trusted networks as appropriate. This
-  setup does not open firewall ports or install multicast reflectors.
+  setup does not open firewall ports or install multicast reflectors. With UFW
+  enabled, SSH stays blocked until a rule such as `sudo ufw limit 22/tcp` exists.
+- Password login stays as configured. To switch to key-only login, authorize a
+  key first; Omarchy's `omarchy-setup-security-sshd` does this, then disables
+  passwords and adds a rate-limited UFW rule. See
+  [network exposure checks](../SETUP.md#network-exposure-checks).
 - Discovery advertises network access, not Git/config write access. New PCs
   never receive credentials to modify this repository or other PCs' config.
 

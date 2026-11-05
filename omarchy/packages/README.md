@@ -25,6 +25,11 @@ app defaults, enable autostart, or change firewall rules. Dependencies may be
 installed by the package manager. Keep systems updated separately through
 Omarchy's normal update workflow; do not use a standalone `pacman -Sy`.
 
+The apps can add their own login autostart: MEGAsync's launch-at-startup
+preference is on by default, and LocalSend has a launch-at-login setting. Both
+write to `~/.config/autostart/`. See
+[what starts at boot and login](../SETUP.md#17-what-starts-at-boot-and-login).
+
 ## Add another app
 
 1. Check the exact package name and source on the target Omarchy version.
