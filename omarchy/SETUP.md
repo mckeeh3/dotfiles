@@ -70,9 +70,10 @@ absolute paths. Do not run the legacy `arch-linux-setup.sh` on Omarchy.
 The desired cross-PC app lists live in [`packages/repo.txt`](packages/repo.txt)
 and [`packages/aur.txt`](packages/aur.txt). Read [package setup](packages/README.md)
 before applying. These are requested additions, not an installed-package audit.
-Shared apps include LocalSend (`localsend`, from Omarchy's repository) and
-KeePass (`keepass`, from Arch's extra repository), plus MEGAsync (`megasync-bin`,
-from the AUR).
+Shared apps include LocalSend and Flea (`localsend` and `flea`, from Omarchy's
+repository), KeePass (`keepass`, from Arch's extra repository), and MEGAsync
+(`megasync-bin`, from the AUR). To install Flea on its own, run
+`omarchy pkg add flea`.
 
 After pulling this repository on each PC, preview and obtain consent, then apply
 in a visible terminal as the normal user:
